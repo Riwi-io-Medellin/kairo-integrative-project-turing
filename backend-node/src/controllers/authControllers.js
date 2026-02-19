@@ -8,10 +8,11 @@ import { validateEmail, validatePassword } from '../utils/validators.js';
 
 export async function register(req, res) {
   try {
-    const { email, password, fullName, role } = req.body;
+    const { email, password, fullName, full_name, role } = req.body;
+    const name = fullName || full_name;
 
     // Validation
-    if (!email || !password || !fullName || !role) {
+    if (!email || !password || !name || !role) {
       return res.status(400).json({
         error: 'All fields are required',
         fields: ['email', 'password', 'fullName', 'role'],
@@ -40,8 +41,12 @@ export async function register(req, res) {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
-    // Create user
-    const newUser = await create({ email, password, fullName, role });
+    const newUser = await create({
+      email,
+      password,
+      fullName: name,
+      role,
+    });
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -128,7 +133,7 @@ export async function getCurrentUser(req, res) {
       user: {
         id: user.id,
         email: user.email,
-        fullName: user.full_name,
+        fullName: user.full_name, 
         role: user.role,
         firstLogin: user.first_login,
       },

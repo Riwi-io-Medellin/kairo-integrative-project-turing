@@ -6,17 +6,21 @@ const pool = new Pool({
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD, // ✅ SIN fallback hardcodeado
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-// Test database connection
+// Log de conexión exitosa
 pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
+  console.log('🔌 New database connection established');
 });
 
+// Log de error de conexión
 pool.on('error', (err) => {
-  console.error('Unexpected database error:', err);
-  process.exit(-1);
+  console.error('❌ Unexpected database error:', err.message);
+  // NO hacer process.exit aquí porque puede ser error temporal
 });
 
 export const query = (text, params) => pool.query(text, params);
