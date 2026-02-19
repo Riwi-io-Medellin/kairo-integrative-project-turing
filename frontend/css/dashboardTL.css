@@ -1,7 +1,11 @@
-
 body {
     background:#f3f3f3;
     font-family: 'Segoe UI', sans-serif;
+}
+li a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .sidebar {
@@ -13,6 +17,10 @@ body {
 }
 
 .sidebar .logo {
+    margin-bottom:40px;
+}
+
+/* .sidebar .logo {
     display:flex;
     align-items:center;
     gap:10px;
@@ -20,7 +28,7 @@ body {
     font-size:22px;
     color:#2b2bb2;
     margin-bottom:40px;
-}
+} */
 
 .sidebar ul {
     list-style:none;
