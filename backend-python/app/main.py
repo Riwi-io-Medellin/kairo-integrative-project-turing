@@ -1,14 +1,21 @@
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+
+
+
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from groq import Groq
-from dotenv import load_dotenv
 from supabase import create_client
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
-load_dotenv()
+
+
 app = FastAPI(title="Learning-Platform AI")
 
 
@@ -19,7 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+from routers import db
+app.include_router(db.router, prefix="/api")
 templates = Jinja2Templates(directory="templates")
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -45,7 +53,7 @@ async def docs():
 
 
 
-supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_ANON_KEY"))
+supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 class ChatRequest(BaseModel):
     message: str
 
