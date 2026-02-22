@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,27 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen p-4">
-    <div class="max-w-8xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden h-[80vh] flex flex-col">
-            <!-- Header -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center">
-                <h1 class="text-3xl font-bold mb-2">🤖 Chat IA</h1>
-                <p class="opacity-90">Powered by Groq Llama3</p>
+                <h1 class="text-3xl font-bold mb-2">🤖 KAIRO AI + SUPABASE</h1>
+                <p class="opacity-90">Busca en tu tabla documents</p>
             </div>
             
-            <!-- Mensajes -->
             <div id="messages" class="flex-1 p-6 overflow-y-auto bg-gray-50 space-y-4">
-                <div class="text-center text-gray-500 py-4">Escribe un mensaje para empezar...</div>
+                <div class="text-center text-gray-500 py-4">Escribe "KAIRO" o copia texto para buscar...</div>
             </div>
             
-            <!-- Input -->
             <div class="p-6 bg-white border-t">
                 <div class="flex gap-2">
-                    <input type="text" id="messageInput" class="flex-1 border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Escribe tu mensaje...">
-                    <button onclick="sendMessage()" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl hover:bg-indigo-700 font-medium">Enviar</button>
+                    <input type="text" id="messageInput" class="flex-1 border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="¿KAIRO? ¿MatchFlow?">
+                    <button onclick="sendMessage()" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl hover:bg-indigo-700 font-medium">Buscar</button>
                 </div>
             </div>
         </div>
@@ -36,6 +31,7 @@
         const messages = document.getElementById('messages');
         const input = document.getElementById('messageInput');
 
+        // 🔥 FUNCIÓN NUEVA sendMessage() - REEMPLAZA LA ORIGINAL
         async function sendMessage() {
             const text = input.value.trim();
             if (!text) return;
@@ -45,28 +41,44 @@
             input.value = '';
 
             try {
-                const response = await fetch('/api/chat', {
+                const response = await fetch('http://localhost:8000/chat-db', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: text })
                 });
+                
                 const data = await response.json();
-                addMessage('IA', data.response, 'bg-gray-200');
+                
+                // 🔥 MUESTRA FUENTES DELA BD
+                let respuesta = data.answer || "Sin respuesta IA";
+                if (data.sources && data.sources.length > 0) {
+                    respuesta += `<br><br><small><strong>📊 Fuentes (${data.sources.length}):</strong><br>`;
+                    data.sources.forEach((src, i) => {
+                        respuesta += `${i+1}. <strong>${src.title}</strong>: ${src.content.substring(0, 100)}...<br>`;
+                    });
+                    respuesta += `</small>`;
+                } else {
+                    respuesta += `<br><small>❌ No encontré en Supabase</small>`;
+                }
+                
+                addMessage('KAIRO AI', respuesta, 'bg-gradient-to-r from-emerald-100 to-blue-100 border-l-4 border-emerald-500 text-sm');
             } catch (error) {
-                addMessage('Error', 'No se pudo conectar con la IA', 'bg-red-200');
+                console.error(error);
+                addMessage('Error', 'Backend no responde (¿puerto 8000? CORS?)', 'bg-red-200');
             }
         }
 
         function addMessage(sender, text, classes) {
             const div = document.createElement('div');
-            div.className = `max-w-xs lg:max-w-md p-3 rounded-2xl ${classes} rounded-br-none`;
-            div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            div.className = `max-w-xs lg:max-w-md p-3 rounded-2xl ${classes} rounded-br-none break-words`;
+            div.innerHTML = `<strong>${sender}:</strong><br><span class="mt-1">${text}</span>`;
             messages.appendChild(div);
             messages.scrollTop = messages.scrollHeight;
         }
 
+        // Enter para enviar
         input.addEventListener('keypress', e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 sendMessage();
             }
