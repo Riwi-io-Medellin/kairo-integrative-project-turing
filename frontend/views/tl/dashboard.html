@@ -23,23 +23,34 @@
           class="rounded-3"
           src="./assets/logo.png"
           alt="logo"
-          style="width: 9rem; height: 9rem; box-shadow: 0px 6px 32px #dedede"
+          style="width: 9rem; height: 9rem"
         />
       </div>
       <ul>
-        <li class="active"><i class="fa-solid fa-chart-pie" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Dashboard</li>
+        <li class="active">
+          <i
+            class="fa-solid fa-chart-pie"
+            style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+          ></i>
+          Dashboard
+        </li>
         <li>
           <a href="./AssignmentTimeline.html"
-            ><i class="fa-solid fa-coins" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Assignment Timeline</a
+            ><i
+              class="fa-solid fa-coins"
+              style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+            ></i>
+            Assignment Timeline</a
           >
         </li>
         <li>
           <a href="./messages.html"
-            ><i class="fa-solid fa-message" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Messages</a
+            ><i
+              class="fa-solid fa-message"
+              style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+            ></i>
+            Messages</a
           >
-        </li>
-        <li>
-          <a href=""><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Calendar</a>
         </li>
       </ul>
     </aside>
@@ -48,7 +59,7 @@
     <main class="main">
       <!-- Topbar -->
       <div class="topbar mb-4">
-        <strong>COMPANY NAME</strong>
+        <strong>KAIRO</strong>
         <div class="d-flex align-items-center gap-3">
           <span>NAME TL</span>
           <i class="fa-solid fa-user fs-4"></i>
@@ -58,26 +69,6 @@
           </div>
         </div>
       </div>
-<!-- ------------------ CHANGE MOD ----------------- -->
-      <script>
-        const btnTheme = document.getElementById("btnTheme");
-        const currentTheme = localStorage.getItem("theme");
-
-        if (currentTheme === "light") {
-          document.documentElement.setAttribute("data-theme", "light");
-          btnTheme.checked = true; 
-        }
-
-        btnTheme.addEventListener("change", () => {
-          if (btnTheme.checked) {
-            document.documentElement.setAttribute("data-theme", "light");
-            localStorage.setItem("theme", "light"); 
-          } else {
-            document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("theme", "dark"); 
-          }
-        });
-      </script>
 
       <div class="row g-3">
         <!-- Progress cards -->
@@ -98,21 +89,14 @@
           <h4>Coders Performance</h4>
 
           <div class="d-flex gap-3 my-3 flex-wrap">
-            <button
-              class="btn btn-sm rounded-pill"
-              style="background: #380c65; color: #dedede"
-            >
+            <button class="btn btn-sm rounded-pill btn-filter">
               Autonomy level
             </button>
-            <button
-              class="btn btn-sm rounded-pill"
-              style="background: #380c65; color: #dedede"
-            >
+            <button class="btn btn-sm rounded-pill btn-filter">
               Performance
             </button>
             <select
-              class="form-select form-select-sm w-auto rounded-pill px-3 btn"
-              style="background: #380c65; color: #dedede"
+              class="form-select form-select-sm w-auto rounded-pill px-3 btn btn-filter"
             >
               <option selected>Skills</option>
               <option value="frontend">Frontend</option>
@@ -121,10 +105,7 @@
               <option value="sql">SQL</option>
               <option value="soft">Soft Skills</option>
             </select>
-            <button
-              class="btn btn-sm rounded-pill"
-              style="background: #380c65; color: #dedede"
-            >
+            <button class="btn btn-sm rounded-pill btn-filter">
               Coders at risk
             </button>
           </div>
@@ -170,7 +151,7 @@
               <i class="fa-solid fa-user"></i>
             </div>
 
-            <h6 class="text-center">CODER INFORMATION</h6>
+            <h6 class="text-center" style="color: #a78bfa">CODER NAME</h6>
 
             <div class="d-flex justify-content-center gap-3 fs-5 my-2">
               <i class="fa-regular fa-message"></i>
@@ -187,10 +168,45 @@
             <p><strong>GitHub:</strong> repository</p>
             <p><strong>Quality code:</strong> 1 - 5</p>
 
-            <button class="btn-report mt-2">Generate report - pdf</button>
+            <button onclick="generarPDF()" class="btn-report mt-2">
+              Generate report - pdf
+            </button>
           </div>
         </div>
       </div>
     </main>
+    <!-- ------------------ CHANGE MOD ----------------- -->
+    <script>
+      const btnTheme = document.getElementById("btnTheme");
+      const currentTheme = localStorage.getItem("theme");
+
+      if (currentTheme === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+        btnTheme.checked = true;
+      }
+
+      btnTheme.addEventListener("change", () => {
+        if (btnTheme.checked) {
+          document.documentElement.setAttribute("data-theme", "light");
+          localStorage.setItem("theme", "light");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+          localStorage.setItem("theme", "dark");
+        }
+      });
+
+      // generador de pdf 
+      async function generarPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(24);
+        doc.text("Hola", 20, 20);
+
+        doc.save("documento.pdf");
+      }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   </body>
 </html>

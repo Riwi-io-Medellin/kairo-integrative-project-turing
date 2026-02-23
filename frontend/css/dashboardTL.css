@@ -20,14 +20,15 @@ li a {
 }
 
 .sidebar {
-    width: 260px;
+    width: 262px;
     background:#e1e1e1;
     min-height:100vh;
     padding:20px;
     position: fixed;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
     color: #dedede;
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
+    background-color: #2a2f3a85;
 }
 
 .sidebar .logo {
@@ -64,13 +65,21 @@ li a {
 .sidebar li.active,
 .sidebar li:hover {
     /* background:#cfcfcf; */
-    color: #dedede;
-    background-color: #5405a3;
+    color: #8b5cf6;
+    /* background-color: #5405a3; */
 }
 
 .main {
     margin-left:260px;
     padding:20px 25px;
+}
+.btn-filter {
+    background: #2a2f3a85;
+    color: #dedede;
+    border: 1px solid gray;
+}
+.btn-filter:hover {
+    background-color: #8b5cf6;
 }
 
 .topbar {
@@ -80,9 +89,10 @@ li a {
     display:flex;
     justify-content:space-between;
     align-items:center;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
     color: #dedede;
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
+    background-color: #2a2f3a85;
 }
 
 .progress-card {
@@ -91,9 +101,10 @@ li a {
     padding:15px;
     text-align:center;
     font-weight:600;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
     color: #dedede;
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
+    background-color: #2a2f3a85;
 }
 
 .table-wrapper {
@@ -111,9 +122,10 @@ table th {
     border-radius:18px;
     padding:20px;
     height:100%;
-    background: linear-gradient(218deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(218deg, #261339 30%, #000000 82%); */
     color: #dedede;
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
+    background-color: #2a2f3a85;
 }
 
 .avatar {
@@ -139,7 +151,7 @@ table th {
 .green { background:#0f8c2f; }
 
 .btn-report {
-    background:#7F0DF2;
+    background-color:#7F0DF2 !important;
     border:none;
     color: #dedede;
     border-radius:14px;
@@ -147,18 +159,23 @@ table th {
     width:100%;
     font-weight:600;
 }
+.btn-report:hover {
+    background:#6d28d9;
+}
 .main-content_container {
     padding: .8rem;
     /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
-    background: linear-gradient(359deg, #261339 10%, #000000 92%);
+    /* background: linear-gradient(359deg, #261339 10%, #000000 92%); */
     color: #dedede;
     border-radius: 20px;
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
+    background-color: #2a2f3a85;
 }
 .table-style {
-    box-shadow: 0px 2px 12px #dedede;
+    /* box-shadow: 0px 2px 12px #dedede; */
     color: #dedede;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
+    background-color: #2a2f3a85;
 }
 .table-style th {
     color: #dedede;
@@ -171,7 +188,6 @@ table th {
 /* -------------- STYLE THEME -------------------- */
 
 :root {
-  /* Modo Oscuro (por defecto) */
   --bg-principal: #0d0d0d;
   --bg-panel: #1a1a1a;
   --texto: #ffffff;
@@ -179,19 +195,42 @@ table th {
 }
 
 [data-theme="light"] {
-  /* Modo Claro (Minimalista) */
-  --bg-principal: #cdcdcd;
+  /* --bg-principal: #cdcdcd; */
+  --bg-principal: #cecece6b;
+  --bg-btnfilter: transparent;
   --bg-panel: #ffffff;
-  --texto: #1e293b;
-  --acento: #3b82f6; /* Un azul moderno para el modo claro */
+  --bg-btnReport: #6d28d9;
+  --texto: #000000;
+  --acento: #3b82f6;
+}
+[data-theme="light"] .sidebar img {
+  filter: invert(1);
 }
 
 body {
   background-color: var(--bg-principal);
   color: var(--texto);
-  transition: all 0.3s ease; /* Para que el cambio sea suave */
+  transition: all 0.3s ease;
 }
 
-.card, .tu-tabla-clase { 
+.card, .tu-tabla-clase, .sidebar, .topbar, .progress-card, .profile-card, .main-content_container { 
   background-color: var(--bg-panel);
+  color: var(--texto);
+  border: 1px solid rgba(128, 128, 128, 0.481);
+}
+.btn-report {
+    background-color: var(--bg-btnReport);
+}
+.btn-filter {
+    color: var(--texto);
+    border: 1px solid rgba(128, 128, 128, 0.481);
+    background-color: var(--bg-btnfilter);
+}
+.table-style{
+    background-color: var(--bg-panel);
+    border: 1px solid rgba(128, 128, 128, 0.481);
+    
+}
+.table-style th {
+    color: var(--texto);
 }

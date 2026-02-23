@@ -5,13 +5,13 @@
 }
 
 body{
-  background:#2b2b2b;
-  animation: fadeInPage 0.6s ease-in-out;
+  /* background:#2b2b2b; */
+  animation: fadeInPage 0.2s ease-in-out;
 }
 @keyframes fadeInPage {
     from {
         opacity: 0;
-        transform: translateY(10px); 
+        transform: translateY(8px); 
     }
     to {
         opacity: 1;
@@ -30,7 +30,8 @@ li a {
     min-height:100vh;
     padding:20px;
     position: fixed;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
+    background: #000000;
     color: #dedede;
     box-shadow: 0px 2px 12px #dedede;
 }
@@ -118,7 +119,7 @@ li a {
 .main{
   margin-left: 260px;
   padding: 22px 30px;
-  background:#f5f5f5;
+  background:#000;
   min-height:100vh;
 }
 
@@ -381,4 +382,31 @@ font-weight: 600;
 .text strong {
   font-size: 15px;
   color: #111;
+}
+
+
+/* -------------- STYLE THEME -------------------- */
+
+:root {
+  --bg-principal: #0d0d0d;
+  --bg-panel: #1a1a1a;
+  --texto: #ffffff;
+  --acento: #a855f7;
+}
+
+[data-theme="light"] {
+  --bg-principal: #cdcdcd;
+  --bg-panel: #ffffff;
+  --texto: #1e293b;
+  --acento: #3b82f6;
+}
+
+main, body {
+  background-color: var(--bg-principal) !important;
+  color: var(--texto) !important;
+  transition: all 0.3s ease;
+}
+
+.card, .tu-tabla-clase { 
+  background-color: var(--bg-panel);
 }

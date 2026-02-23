@@ -1,37 +1,73 @@
+/* ---------------- ANIMACIÓN ---------------- */
+
 body {
-  background: #f2f2f2;
   font-family: "Segoe UI", sans-serif;
   animation: fadeInPage 0.6s ease-in-out;
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 @keyframes fadeInPage {
-    from {
-        opacity: 0;
-        transform: translateY(10px); 
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 li a {
   text-decoration: none;
   color: inherit;
   display: block;
 }
 
+/* ---------------- VARIABLES DE TEMA ---------------- */
+
+/* 🌙 DARK POR DEFECTO */
+:root {
+  --bg-principal: #0f0f0f;       /* Fondo negro */
+  --bg-panel: #1e1e1e;           /* Contenedores gris oscuro */
+  --bg-soft: #2a2a2a;            /* Hover / inputs */
+  --texto: #ffffff;              /* Texto blanco */
+  --acento: #8b5cf6;
+}
+
+/* ☀️ LIGHT MODE */
+[data-theme="light"] {
+  --bg-principal: #e6e6e6;       /* Fondo gris claro */
+  --bg-panel: #ffffff;           /* Contenedores blancos */
+  --bg-soft: #f2f2f2;            /* Hover / inputs */
+  --texto: #000000;              /* Texto negro */
+  --acento: #8b5cf6;
+}
+
+/* ---------------- ESTRUCTURA ---------------- */
+
+body {
+  background-color: var(--bg-principal);
+  color: var(--texto);
+}
+
+/* ---------------- SIDEBAR ---------------- */
+
 .sidebar {
-  width: 260px;
-  background: #dfdfdf;
+  width: 262px;
   min-height: 100vh;
   position: fixed;
   padding: 20px;
+  background-color: var(--bg-panel);
+  color: var(--texto);
+  transition: 0.3s ease;
 }
-
-.logo img {
-  width: 160px;
-  margin-bottom: 30px;
+.sidebar .logo {
+    margin-bottom:40px;
 }
-
+[data-theme="light"] .sidebar img {
+  filter: invert(1);
+}
 .sidebar ul {
   padding: 0;
   list-style: none;
@@ -45,27 +81,41 @@ li a {
   gap: 12px;
   align-items: center;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .sidebar li.active,
 .sidebar li:hover {
-  background: #cfcfcf;
+  /* background: var(--bg-soft); */
+  color: #8b5cf6;
 }
+
+/* ---------------- MAIN ---------------- */
 
 .main {
   margin-left: 260px;
   padding: 20px 25px;
+  background-color: var(--bg-principal);
+  color: var(--texto);
+  min-height: 100vh;
+  transition: 0.3s ease;
 }
 
+/* ---------------- TOPBAR ---------------- */
+
 .topbar {
-  background: #dedede;
+  background: var(--bg-panel);
   padding: 14px 25px;
   border-radius: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  color: var(--texto);
+  transition: 0.3s ease;
 }
+
+/* ---------------- CHAT LAYOUT ---------------- */
 
 .chat-wrapper {
   display: grid;
@@ -74,20 +124,24 @@ li a {
   height: calc(100vh - 150px);
 }
 
+/* ---------------- CHAT LIST ---------------- */
+
 .chat-list {
-  background: white;
+  background: var(--bg-panel);
   border-radius: 16px;
   padding: 15px;
   overflow-y: auto;
+  transition: 0.3s ease;
 }
 
 .search {
-  background: #e1e1e1;
+  background: var(--bg-soft);
   border-radius: 20px;
   padding: 10px 16px;
   border: none;
   width: 100%;
   margin-bottom: 15px;
+  color: var(--texto);
 }
 
 .chat-item {
@@ -97,32 +151,38 @@ li a {
   border-radius: 14px;
   cursor: pointer;
   margin-bottom: 12px;
+  transition: 0.2s;
 }
 
 .chat-item.active,
 .chat-item:hover {
-  background: #e6e6e6;
+  background: var(--bg-soft);
 }
+
+/* ---------------- AVATAR ---------------- */
 
 .avatar {
   width: 48px;
   height: 48px;
-  background: #5c6585;
+  background: var(--acento);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #fff;
   font-size: 22px;
 }
 
+/* ---------------- CHAT BOX ---------------- */
+
 .chat-box {
-  background: white;
+  background: var(--bg-panel);
   border-radius: 16px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: 0.3s ease;
 }
 
 .chat-header {
@@ -132,6 +192,8 @@ li a {
   align-items: center;
   margin-bottom: 15px;
 }
+
+/* ---------------- MENSAJES ---------------- */
 
 .chat-body {
   flex: 1;
@@ -145,19 +207,24 @@ li a {
   border-radius: 16px;
   margin-bottom: 12px;
   font-size: 14px;
+  color: var(--texto);
 }
 
 .incoming {
-  background: #e1e1e1;
+  background: var(--bg-soft);
   align-self: flex-start;
   border-bottom-left-radius: 4px;
 }
 
 .outgoing {
-  background: #d9e7ff;
+  /* background: var(--acento); */
+  background: var(--acento);
+  color: #fff;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
+
+/* ---------------- FOOTER ---------------- */
 
 .chat-footer {
   display: flex;
@@ -168,14 +235,17 @@ li a {
 .chat-footer input {
   border-radius: 20px;
   border: none;
-  background: #e1e1e1;
+  background: var(--bg-soft);
   padding: 10px 16px;
   flex: 1;
+  color: var(--texto);
 }
 
 .send-btn {
   border-radius: 20px;
   padding: 8px 18px;
   border: none;
-  background: #bcd4ff;
+  background: var(--acento);
+  color: #fff;
+  cursor: pointer;
 }

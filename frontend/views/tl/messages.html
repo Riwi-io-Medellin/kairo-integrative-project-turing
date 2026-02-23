@@ -12,15 +12,42 @@
   <body>
     <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="logo">
-        <img src="./assets/logo2.png" class="rounded-3" style="width: 14rem; height: 8rem;"/>
+      <div class="logo d-flex justify-content-center align-items-center">
+        <img
+          class="rounded-3"
+          src="./assets/logo.png"
+          alt="logo"
+          style="width: 9rem; height: 9rem"
+        />
       </div>
-
       <ul>
-        <li><a href="./dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-        <li><a href="./AssignmentTimeline.html"><i class="fa-solid fa-coins"></i> Assignment Timeline</a></li>
-        <li class="active"><a href="#"><i class="fa-solid fa-message"></i> Messages</a></li>
-        <li><a href=""><i class="fa-solid fa-calendar"></i> Calendar</a></li>
+        <li>
+          <a href="./dashboard.html"
+            ><i
+              class="fa-solid fa-chart-pie"
+              style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+            ></i>
+            Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="./AssignmentTimeline.html"
+            ><i
+              class="fa-solid fa-coins"
+              style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+            ></i>
+            Assignment Timeline</a
+          >
+        </li>
+        <li class="active">
+          <a href="#"
+            ><i
+              class="fa-solid fa-message"
+              style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem"
+            ></i>
+            Messages</a
+          >
+        </li>
       </ul>
     </aside>
 
@@ -33,7 +60,7 @@
           <i class="fa-solid fa-user fs-4"></i>
           <i class="fa-regular fa-bell fs-4"></i>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox"/>
+            <input class="form-check-input" type="checkbox" id="btnTheme"/>
           </div>
         </div>
       </div>
@@ -126,5 +153,25 @@
         </div>
       </section>
     </main>
+    <script>
+const btnTheme = document.getElementById("btnTheme");
+
+const currentTheme = localStorage.getItem("theme");
+
+if (currentTheme === "light") {
+  document.documentElement.setAttribute("data-theme", "light");
+  btnTheme.checked = true;
+}
+
+btnTheme.addEventListener("change", () => {
+  if (btnTheme.checked) {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("theme", "dark");
+  }
+});
+</script>
   </body>
 </html>

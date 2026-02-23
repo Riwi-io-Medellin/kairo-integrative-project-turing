@@ -6,7 +6,7 @@
 
 body{
   background:#2b2b2b;
-  animation: fadeInPage 0.6s ease-in-out;
+  animation: fadeInPage 0.2s ease-in-out;
 }
 body {
   background-color: var(--bg-principal);
@@ -15,7 +15,7 @@ body {
 @keyframes fadeInPage {
     from {
         opacity: 0;
-        transform: translateY(10px); 
+        transform: translateY(8px); 
     }
     to {
         opacity: 1;
@@ -34,7 +34,8 @@ li a {
     min-height:100vh;
     padding:20px;
     position: fixed;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    /* background: linear-gradient(188deg, #261339 30%, #000000 82%); */
+    background: #000000;
     color: #dedede;
     box-shadow: 0px 2px 12px #dedede;
 }
@@ -110,7 +111,7 @@ li a {
   flex-direction:column;
   align-items:center;
   box-shadow: 0px 2px 12px #dedede;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    background: linear-gradient(214deg, #261339 30%, #000000 82%);
     color: #dedede;
     padding: 2rem;
 }
@@ -154,7 +155,7 @@ li a {
 /* RIGHT */
 .profile-content{
   box-shadow: 0px 2px 12px #dedede;
-    background: linear-gradient(188deg, #261339 30%, #000000 82%);
+    background: linear-gradient(225deg, #261339 30%, #000000 82%);
     color: #dedede;
     padding: 2rem;
     border-radius: 20px;
