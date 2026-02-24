@@ -2,126 +2,226 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwi - Personalized Growth Path</title>
 
-    <title>Document</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="./frontend/css/landing_page.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./frontend/css/landing_page.css" />
 </head>
 
 <body>
-    <header class="main-header">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <img src="./frontend/views/auth/img_logo/logo.png" alt="">
+  <header class="main-header">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <img src="./frontend/views/auth/img_logo/logo_landing.png" alt="Riwi Logo" style=" cursor: pointer"
+          onclick="window.location.reload()" />
 
-                <div class="me-5 d-flex align-items-center gap-5">
+        <div class="me-5 d-flex align-items-center gap-5">
+          <div class="log-in">
+            <button class="btn-log-in" onclick="window.location.href = './frontend/views/auth/login.html'">
+              Log-in
+            </button>
+          </div>
+          <div class="btn-register" style="cursor: pointer"
+            onclick="window.location.href = './frontend/views/auth/register.html'">
+            Register
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
 
+  <main class="content-main">
+    <section class="hero text-center">
+      <div class="container" id="content-title">
+        <h1 class="hero-title">
+          Your Path to Success in Tech, <span class="gradient-text">Designed by AI</span>.
+        </h1>
+        <p class="hero-text">
+          No more generic learning. We sync your academic progress, evaluate your Soft Skills, and generate a 100%
+          personalized training path powered by Groq's high-speed inference.
+        </p>
 
-                    <div class="log-in">
-                        <button class="btn-log-in">Log-in</button>
-                    </div>
-                    <div class=" btn-register">Register</div>
-                </div>
+        <div class="d-flex justify-content-center gap-5 flex-wrap mt-5 pt-3">
+          <button class="btn-btn1" onclick="window.location.href = './frontend/views/auth/register.html'">
+            Start Initial Assessment
+          </button>
+          <button class="btn-btn2">View Demo Path</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="diagnostic-pillars py-5">
+      <div class="container">
+        <div class="small-description text-center" style="width: 100%;">
+          <h2 class="section-title">The 3 Diagnostic Pillars</h2>
+          <p class="content-text-1">How the "brain" of the IA collects data to build your roadmap.</p>
+        </div>
+        <div class="row g-4 mt-4">
+          <div class="col-md-4">
+            <article class="card-simple">
+              <h3>Academic Sync (Moodle)</h3>
+              <p class="p-of-the-card">We automatically import your grades and technical progress to know exactly where
+                you stand.</p>
+              <img src="./frontend/views/auth/img_logo/logo_academic_sync.png" alt="">
+            </article>
+          </div>
+          <div class="col-md-4">
+            <article class="card-simple">
+              <h3>Soft Skills Lab</h3>
+              <p class="p-of-the-card">An interactive scenario-based test to measure your leadership, communication, and
+                autonomy.</p>
+              <img src="./frontend/views/auth/img_logo/logo_soft_skills.png" alt="">
+            </article>
+          </div>
+          <div class="col-md-4">
+            <article class="card-simple">
+              <h3>Career Profiling</h3>
+              <p class="p-of-the-card">Tell us your goals. Fullstack? Data? AI? We align your path with real market
+                demands.</p>
+              <img src="./frontend/views/auth/img_logo/logo_career_profiling.png" alt="">
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-articule">
+      <div class="container ">
+        <div class="small-description text-center ">
+          <h2 class="section-title title1 " style="width: 100%;">Artificial Intelligence that doesn't just predict—it
+            guides.</h2>
+        </div>
+
+        <div class="row g-4 mt-5 pt-3">
+          <div class="col-md-4">
+            <article class="card-simple">
+              <h3>LangChain Orchestration</h3>
+              <p class="p-of-the-card">We process thousands of data points to build your unique Roadmap.</p>
+                  <img src="./frontend/views/auth/img_logo/logo_langchain.png" alt="">
+            </article>
+          </div>
+
+          <div class="col-md-4">
+            <article class="card-simple pt-4">
+              <h3>Privacy &amp; Speed</h3>
+              <p class="p-of-the-card">We use <em>Groq LPU technology</em> to ensure ultra-fast responses while
+                generating your weekly schedule.</p>
+                  <img src="./frontend/views/auth/img_logo/logo_privacy_speed.png" alt="">
+            </article>
+          </div>
+
+          <div class="col-md-4">
+            <article class="card-simple ">
+              <h3>Risk Detection</h3>
+              <p class="p-of-the-card">Our algorithm identifies if your pace drops and alerts your Team Leader to
+                provide timely support.</p>
+                <img src="./frontend/views/auth/img_logo/logo detection.png" alt="">
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="role-benefits py-5 bg-gradient-to-r">
+    <div class="container">
+      <div class="small-description text-center text-white d-flex">
+        <h2 class="section-title justify-content-center text-center title2">What You Get</h2>
+      </div>
+      <div class="row g-4 mt-4">
+        <div class="col-md-6">
+          <div class="benefit-card ">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fa fa-user-graduate fa-2x "></i>
+              <h3 class="m-0">For the Coder (Student)</h3>
             </div>
-        </nav>
-    </header>
-    <main class="content-main">
-        <section class="hero text-center">
-            <div class="container" id="content-title">
-                <h1 class="hero-title">
-                    Welcome to your
-                    <span class="gradient-text">Personalized Growth Path</span>
-                </h1>
-                <p class="hero-text">
-                    Unlock your potential at Riwi. Our AI analyzes your technical skills
-                    and soft skills to build a curriculum tailored specifically for your
-                    career goals. .
-                </p>
-
-                <div class="d-flex justify-content-center gap-5 flex-wrap mt-5 pt-3">
-                    <button class="btn-btn1">Start Initial Assessment</button>
-                    <button class="btn-btn2">View Demo Path</button>
-                </div>
+            <ul>
+              <li>Interactive Timeline: week-by-week progress with an AI task
+                checklist.</li>
+              <li>Real-Time Progress: each "check" updates your profile
+                instantly.</li>
+              <li>Focus on What Matters: skip known topics and target weaknesses.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="benefit-card ">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fa fa-chalkboard-teacher fa-2x me-3 text-primary"></i>
+              <h3 class="m-0">For the Team Leader (Mentor)</h3>
             </div>
-        </section>
-        <section class="d-flex justify-content-center gap-5 mt-5 pt-3" id="items-12">
-            <h3>AI VERIFIED</h3>
-            <h3>MOODLE INTEGRATED</h3>
-            <h3>SKILL MAPPING</h3>
-        </section>
+            <ul>
+              <li>Supervision Dashboard: group view with performance alerts.</li>
+              <li>AI Reports: summaries of each Coder's results.</li>
+              <li>Direct Feedback: add personalized mentorship to any path.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <section class="content-articule">
-            <div class="container">
-                <div class="small-description">
-                    <h2 class="section-title">How it works</h2>
-                    <p class="content-text-1">
-                        Your journey is calculated through three core pillars of data to
-                        ensure the most efficient learning experience possible.
-                    </p>
-                </div>
+  <section class="how-it-works py-5">
+    <div class="container">
+      <h2 class="section-title text-center text-white mb-5">How it Works</h2>
+      <div class="row g-4 justify-content-center">
+        <div class="col-lg-2 col-md-4 col-6 text-center animate">
+          <div class="step-icon bg-primary text-white mb-3"></div>
+          <h5 class="text-white">Register</h5>
+          <p class="text-white-50">Create your profile and link your academic history.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 text-center animate">
+          <div class="step-icon bg-danger text-white mb-3"></div>
+          <h5 class="text-white">Diagnostic</h5>
+          <p class="text-white-50">Complete the Soft Skills test and define your career interests.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 text-center animate">
+          <div class="step-icon bg-success text-white mb-3"></div>
+          <h5 class="text-white">Generation</h5>
+          <p class="text-white-50">Our AI (via Groq) processes your information in milliseconds.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 text-center animate">
+          <div class="step-icon bg-warning text-white mb-3"></div>
+          <h5 class="text-white">Execution</h5>
+          <p class="text-white-50">Follow your custom path, complete challenges, and upload evidence.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 text-center animate">
+          <div class="step-icon bg-light text-white mb-3"></div>
+          <h5 class="text-white">Growth</h5>
+          <p class="text-white-50">Receive feedback from your TL and adjust your way toward employability.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                <div class="row g-4 mt-5 pt-3">
-                    <div class="col-md-4">
-                        <article class="card-simple">
-                            <div class="icon"></div>
-                            <h3>Soft Skills Diagnostic</h3>
-                            <p class="p-of-the-card">
-                                Evaluate your communication, teamwork, and leadership
-                                potential through our interactive scenario-based assessment.
-                            </p>
-                        </article>
-                    </div>
+  <footer class="footer mt-5">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h2 class="footer-logo"><span>Riwi Learning Platform</span></h2>
+        <p>Riwi Learning Platform - Elevating human talent through AI.</p>
+      </div>
+      <div class="footer-section link-group">
+        <h3>Quick Links</h3>
+        <ul class="list-unstyled footer-links">
+          <li><a href="#" class="text-white-50">Privacy Policy</a></li>
+          <li><a href="#" class="text-white-50">Terms of Service</a></li>
+          <li><a href="#" class="text-white-50">Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <p>Email: <a href="mailto:info@riwi.ai" class="text-white-50">info@riwi.ai</a></p>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <p class="text-white-50">© 2026 Riwi Integrator Project. MVP v1.0.</p>
+    </div>
+  </footer>
 
-                    <div class="col-md-4">
-                        <article class="card-simple">
-                            <div class="icon"></div>
-                            <h3>Academic Sync</h3>
-                            <p class="p-of-the-card">
-                                We'll automatically synchronize your existing Moodle progress
-                                and technical foundations to pick up exactly where you left
-                                off.
-                            </p>
-                        </article>
-                    </div>
-
-                    <div class="col-md-4">
-                        <article class="card-simple">
-                            <div class="icon"></div>
-                            <h3>AI-Generated Curriculum</h3>
-                            <p class="p-of-the-card">
-                                Receive a custom-tailored roadmap focusing on what you need
-                                most to succeed, skipping what you already know.
-                            </p>
-                        </article>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="main-footer text-center">
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h2 class="footer-logo"><span>Kairo</span></h2>
-                </div>
-
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h3>enlaces1 </h3>
-                    </div>
-                    <div class="link-group">
-                        <h3>enlances2</h3>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
