@@ -8,17 +8,17 @@
 /* --------------------- VARIABLES */
 :root {
   --bg-principal: #000000;
-  --bg-panel: #111111;
-  --texto: #dedede;
+  --bg-panel: #1f1f1f;
+  --texto: #f1f1f1;
   --acento: #a855f7;
-  --shadow: rgba(255,255,255,0.1);
-  --border-soft: rgba(128,128,128,0.25);
+  --shadow: rgba(255,255,255,0.05);
+  --border-soft: rgba(255,255,255,0.08);
 }
 
 [data-theme="light"] {
-  --bg-principal: #e5e5e5;
+  --bg-principal: #e9e9e9;
   --bg-panel: #ffffff;
-  --texto: #000000;
+  --texto: #111111;
   --acento: #a855f7;
   --shadow: rgba(0,0,0,0.08);
   --border-soft: rgba(0,0,0,0.08);
@@ -176,4 +176,14 @@ li a {
 .skill-level{
   font-size:12px;
   opacity:0.7;
+}
+.discord-header, .discord-info {
+    color: var(--texto);
+}
+.discord-header {
+    text-align: center;
+}
+.discord-info a {
+    text-decoration: none;
+    color: var(--texto);
 }

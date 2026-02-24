@@ -17,35 +17,15 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo d-flex justify-content-center align-items-center">
-        <img
-          class="rounded-3"
-          src="./../../views/tl/assets/logo.png"
-          alt="logo"
-          style="width: 9rem; height: 9rem; box-shadow: 0px 6px 32px #dedede"
-        />
+        <img class="rounded-3" src="./../../views/tl/assets/logo.png" alt="logo" style="width: 9rem; height: 9rem;"/>
       </div>
       <ul>
-        <li>
-          <a href="./dashboard.html"
-            ><i class="fa-solid fa-chart-pie" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Dashboard</a
-          >
-        </li>
-        <li>
-          <a href="./profile.html"
-            ><i class="fa-solid fa-coins" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Profile</a
-          >
-        </li>
-        <li class="active">
-          <a href="#"
-            ><i class="fa-solid fa-message" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Skills</a
-          >
-        </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Discord</a>
-        </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> AI</a>
-        </li>
+        <li><a href="./dashboard.html"><i class="fa-solid fa-chart-pie" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Dashboard</a></li>
+        <li><a href="./profile.html"><i class="fa-solid fa-coins" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Profile</a></li>
+        <li class="active"><a href="#"><i class="fa-solid fa-message" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Skills</a></li>
+        <!-- <li><a href="./discord.html"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Discord</a></li> -->
+         <li><a href="./discord.html"  class="discord-btn"><i class="fa-brands fa-discord" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i>Discord</a></li>
+        <li><a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> AI</a></li>
       </ul>
     </aside>
 
@@ -54,7 +34,7 @@
 
     <!-- Topbar -->
       <div class="topbar mb-4">
-        <strong>COMPANY NAME</strong>
+        <strong>KAIRO</strong>
         <div class="d-flex align-items-center gap-3">
           <span>NAME CODER</span>
           <i class="fa-solid fa-user fs-4"></i>
@@ -64,7 +44,57 @@
           </div>
         </div>
       </div>
-<!-- ------------------ CHANGE MOD ----------------- -->
+
+    <!-- skills -->
+     <section class="skills-section">
+
+  <div class="skill-card">
+    <div class="skill-header">
+      <div class="skill-icon">💻</div>
+      <h3>JavaScript</h3>
+    </div>
+    <p class="skill-desc">
+      Desarrollo de aplicaciones dinámicas, manipulación del DOM y consumo de APIs.
+    </p>
+    <div class="progress">
+      <div class="progress-bar" style="width: 85%;"></div>
+    </div>
+    <span class="skill-level">Avanzado - 85%</span>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-header">
+      <div class="skill-icon">⚛️</div>
+      <h3>React</h3>
+    </div>
+    <p class="skill-desc">
+      Creación de interfaces modernas con componentes reutilizables y hooks.
+    </p>
+    <div class="progress">
+      <div class="progress-bar" style="width: 75%;"></div>
+    </div>
+    <span class="skill-level">Intermedio - 75%</span>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-header">
+      <div class="skill-icon">🗄️</div>
+      <h3>SQL</h3>
+    </div>
+    <p class="skill-desc">
+      Diseño de bases de datos, consultas optimizadas y modelado relacional.
+    </p>
+    <div class="progress">
+      <div class="progress-bar" style="width: 70%;"></div>
+    </div>
+    <span class="skill-level">Intermedio - 70%</span>
+  </div>
+
+</section>
+
+  </main>
+
+  <!-- ------------------ CHANGE MOD ----------------- -->
       <script>
         const btnTheme = document.getElementById("btnTheme");
         const currentTheme = localStorage.getItem("theme");
@@ -84,8 +114,5 @@
           }
         });
       </script>
-
-  </main>
-
 </body>
 </html>

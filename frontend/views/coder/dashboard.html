@@ -17,31 +17,15 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo d-flex justify-content-center align-items-center">
-        <img
-          class="rounded-3"
-          src="./../../views/tl/assets/logo.png"
-          alt="logo"
-          style="width: 9rem; height: 9rem; box-shadow: 0px 6px 32px #dedede"
-        />
+        <img class="rounded-3" src="./../../views/tl/assets/logo.png" alt="logo" style="width: 9rem; height: 9rem;"/>
       </div>
       <ul>
         <li class="active"><i class="fa-solid fa-chart-pie" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Dashboard</li>
-        <li>
-          <a href="./profile.html"
-            ><i class="fa-solid fa-coins" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Profile</a
-          >
-        </li>
-        <li>
-          <a href="./skills.html"
-            ><i class="fa-solid fa-message" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Skills</a
-          >
-        </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Discord</a>
-        </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> AI</a>
-        </li>
+        <li><a href="./profile.html"><i class="fa-solid fa-coins" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Profile</a></li>
+        <li><a href="./skills.html"><i class="fa-solid fa-message" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Skills</a></li>
+        <!-- <li><a href="./discord.html"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> Discord</a></li> -->
+         <li><a href="./discord.html"  class="discord-btn"><i class="fa-brands fa-discord" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i>Discord</a></li>
+        <li><a href="#"><i class="fa-solid fa-calendar" style="font-weight: 900; font-size: 1.5rem; margin-right: 0.5rem;"></i> AI</a></li>
       </ul>
     </aside>
 
@@ -50,7 +34,7 @@
 
     <!-- Topbar -->
       <div class="topbar mb-4">
-        <strong>COMPANY NAME</strong>
+        <strong>KAIRO</strong>
         <div class="d-flex align-items-center gap-3">
           <span>NAME CODER</span>
           <i class="fa-solid fa-user fs-4"></i>
@@ -60,26 +44,7 @@
           </div>
         </div>
       </div>
-<!-- ------------------ CHANGE MOD ----------------- -->
-      <script>
-        const btnTheme = document.getElementById("btnTheme");
-        const currentTheme = localStorage.getItem("theme");
 
-        if (currentTheme === "light") {
-          document.documentElement.setAttribute("data-theme", "light");
-          btnTheme.checked = true; 
-        }
-
-        btnTheme.addEventListener("change", () => {
-          if (btnTheme.checked) {
-            document.documentElement.setAttribute("data-theme", "light");
-            localStorage.setItem("theme", "light"); 
-          } else {
-            document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("theme", "dark"); 
-          }
-        });
-      </script>
 
     <!-- HERO -->
     <section class="hero">
@@ -309,6 +274,26 @@ skills.forEach(skill => {
 </section>
 
   </main>
+  <!-- ------------------ CHANGE MOD ----------------- -->
+      <script>
+        const btnTheme = document.getElementById("btnTheme");
+        const currentTheme = localStorage.getItem("theme");
+
+        if (currentTheme === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+          btnTheme.checked = true; 
+        }
+
+        btnTheme.addEventListener("change", () => {
+          if (btnTheme.checked) {
+            document.documentElement.setAttribute("data-theme", "light");
+            localStorage.setItem("theme", "light"); 
+          } else {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "dark"); 
+          }
+        });
+      </script>
 
 </body>
 </html>
