@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    
+    <style>
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Fix para PDF */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .shadow-xl { box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; }
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: #f9fafb;
+            min-height: 100vh;
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 24px 48px;
+        }
+        
+        /* Card principal */
+        .card {
+            background: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0,0, 0.1), 0 10px 10px -5px rgba(0, 0,0, 0.04);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            padding: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 4px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logo-container {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 16px;
+            border-radius: 12px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: auto;
+        }
+        
+        .title-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+        
+        .title-section p {
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .report-info h3 {
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .report-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Información General */
+        .info-section {
+            padding: 32px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin: 32px;
+            border: 1px solid #f1f5f9;
+        }
+        
+        .section-title {
+            color: #2563eb;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title span {
+            font-size: 1.25rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .info-label {
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .info-value {
+            color: #111827;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .info-mono {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 96px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 4px;
+        }
+        
+        /* Tabla Skills */
+        .table-section {
+            padding: 0 32px 32px;
+        }
+        
+        .skills-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0,0, 0.1);
+        }
+        
+        .skills-table th {
+            background: linear-gradient(135deg, #0b50da 0%, #1f8c8c 100%);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .skills-table th.text-center {
+            text-align: center;
+        }
+        
+        .skills-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .skills-table tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .skills-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #10b981;
+            color: white;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-excelente {
+            color: #059669;
+            font-weight: 500;
+        }
+        
+        .status-bueno {
+            color: #d97706;
+            font-weight: 500;
+        }
+        
+        /* Análisis IA */
+        .analysis-section {
+            padding: 0 32px 32px;
+        }
+        
+        .analysis-card {
+            background: linear-gradient(to right, #eff6ff, #ecfdf5);
+            padding: 32px;
+            border-radius: 16px;
+            border-left: 8px solid #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0,0, 0.1);
+        }
+        
+        .analysis-text {
+            color: #374151;
+            line-height: 1.75;
+            font-size: 0.875rem;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding: 32px 32px 48px;
+            border-top: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+            }
+        }
+        
+        .footer-left {
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-left {
+                text-align: left;
+            }
+        }
+        
+        .footer-left p {
+            font-size: 0.75rem;
+            color: #6b7280;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+        
+        .footer-left p:last-child {
+            color: #9ca3af;
+        }
+        
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 24px;
+                padding: 24px;
+            }
+            
+            .container {
+                padding: 0 16px 32px;
+            }
+            
+            .info-section, .table-section, .analysis-section {
+                margin: 16px;
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-section">
+                    <div class="logo-container">
+                        <img class="logo" src="/frontend/views/tl/assets/logo2.png" alt="Logo Kairo"/>
+                    </div>
+                    <div class="title-section">
+                        <h1>KAIRO</h1>
+                        <p>Coder Solution</p>
+                    </div>
+                </div>
+                <div class="report-info">
+                    <h3>Informe de Resultados</h3>
+                    <p>{{ fecha }}</p>
+                </div>
+            </div>
+
+            <!-- Información General -->
+            <div class="info-section">
+                <h2 class="section-title">
+                    <span class="material-symbols-outlined">person</span>
+                    Información General
+                </h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <p class="info-label">Nombre</p>
+                        <p class="info-value">{{ nombre }}</p>
+                    </div>
+                    <div class="info-item">
+                        <p class="info-label">ID</p>
+                        <p class="info-value info-mono">#{{ coder_id }}</p>
+                    </div>
+                    <div class="info-item">
+                        <p class="info-label">Email</p>
+                        <p class="info-value">{{ email }}</p>
+                    </div>
+                    <div class="info-item">
+                        <p class="info-label">Módulo / Progreso</p>
+                        <div class="progress-container">
+                            <span class="info-value">Módulo {{ modulo }}</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ progreso }}%"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500;">{{ progreso }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla Soft Skills -->
+            <div class="table-section">
+                <h2 class="section-title">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Evaluación Soft Skills
+                </h2>
+                <div style="overflow-x: auto;">
+                    <table class="skills-table">
+                        <thead>
+                            <tr>
+                                <th>Habilidad</th>
+                                <th class="text-center">Puntuación</th>
+                                <th class="text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 600;">Autonomía</td>
+                                <td class="text-center"><span class="score-badge">{{ autonomy }}/5</span></td>
+                                <td class="text-center">
+                                    {% if autonomy >= 4 %}<span class="status-excelente">Excelente</span>
+                                    {% elif autonomy >= 3 %}<span class="status-bueno">Bueno</span>
+                                    {% else %}<span style="color: #dc2626; font-weight: 500;">Mejorar</span>{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Gestión del Tiempo</td>
+                                <td class="text-center"><span class="score-badge">{{ time_management }}/5</span></td>
+                                <td class="text-center">
+                                    {% if time_management >= 4 %}<span class="status-excelente">Excelente</span>
+                                    {% elif time_management >= 3 %}<span class="status-bueno">Bueno</span>
+                                    {% else %}<span style="color: #dc2626; font-weight: 500;">Mejorar</span>{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Resolución de Problemas</td>
+                                <td class="text-center"><span class="score-badge">{{ problem_solving }}/5</span></td>
+                                <td class="text-center">
+                                    {% if problem_solving >= 4 %}<span class="status-excelente">Excelente</span>
+                                    {% elif problem_solving >= 3 %}<span class="status-bueno">Bueno</span>
+                                    {% else %}<span style="color: #dc2626; font-weight: 500;">Mejorar</span>{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Comunicación</td>
+                                <td class="text-center"><span class="score-badge">{{ communication }}/5</span></td>
+                                <td class="text-center">
+                                    {% if communication >= 4 %}<span class="status-excelente">Excelente</span>
+                                    {% elif communication >= 3 %}<span class="status-bueno">Bueno</span>
+                                    {% else %}<span style="color: #dc2626; font-weight: 500;">Mejorar</span>{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Trabajo en Equipo</td>
+                                <td class="text-center"><span class="score-badge">{{ teamwork }}/5</span></td>
+                                <td class="text-center">
+                                    {% if teamwork >= 4 %}<span class="status-excelente">Excelente</span>
+                                    {% elif teamwork >= 3 %}<span class="status-bueno">Bueno</span>
+                                    {% else %}<span style="color: #dc2626; font-weight: 500;">Mejorar</span>{% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Análisis IA -->
+            <div class="analysis-section">
+                <h2 class="section-title">
+                    <span class="material-symbols-outlined">psychology</span>
+                    Análisis Profesional
+                </h2>
+                <div class="analysis-card">
+                    <div class="analysis-text">{{ analisis }}</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <p>Kairo Coder Solution</p>
+                        <p>Generado automáticamente {{ fecha }}</p>
+                    </div>
+                    <div class="footer-right">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span>Documento verificado digitalmente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -49,7 +49,7 @@ async def generate_roadmap(request: RoadmapRequest):
     try:
         # 1. Initialize Cloud Service Clients
         groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
+        supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
         # 2. Fetch Coder Onboarding Data (Soft Skills)
         # This aligns the AI output with the "Life Skills" objective.
@@ -87,7 +87,7 @@ async def generate_roadmap(request: RoadmapRequest):
 
         # 4. AI Inference
         completion = groq_client.chat.completions.create(
-            model=os.getenv("MODEL_NAME", "llama-3.3-70b-versatile"),
+            model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"}
         )

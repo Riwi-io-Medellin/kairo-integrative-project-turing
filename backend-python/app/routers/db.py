@@ -29,7 +29,7 @@ SOLO SQL. SIN <think>. SIN ;. SIN ```. SIN explicación.
 EJEMPLO: SELECT COUNT(*) FROM users"""
 
     sql_response = client.chat.completions.create(
-        model="qwen/qwen3-32b",
+        model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.0
     )
@@ -61,7 +61,7 @@ EJEMPLO: SELECT COUNT(*) FROM users"""
     # Respuesta final IA
     prompt_final = f"Pregunta: {user_message}\nSQL: {sql_query}\nDatos: {data}\n\nResume en español:"
     final_response = client.chat.completions.create(
-        model="qwen/qwen3-32b",
+        model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt_final}]
     )
     

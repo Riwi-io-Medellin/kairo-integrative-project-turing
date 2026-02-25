@@ -3,18 +3,18 @@ Riwi Learning Platform - AI Microservice
 Main entry point for the FastAPI application. 
 Orchestrates routers, middleware, and global configurations.
 """
-
+from dotenv import load_dotenv
 import os
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 
+load_dotenv()
 # Import our domain-specific routers
-from app.routers import roadmap, chat
+from app.routers import roadmap, chat,db,reports
 
 # Load environment variables (API Keys, URLs, Model names)
-load_dotenv()
+
 
 # Professional logging configuration
 logging.basicConfig(
@@ -38,6 +38,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "http://localhost:5500", 
+        "http://127.0.0.1:5500",
         "http://127.0.0.1:3000",
         "http://localhost:5173",  # Common Vite/React port
         "http://127.0.0.1:5173",
@@ -52,6 +54,8 @@ app.add_middleware(
 # We include the roadmap generator and the specialized AI chat
 app.include_router(roadmap.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
+app.include_router(db.router, prefix="/api", tags=["database"])
+app.include_router(reports.router, prefix="/api", tags=["soft_skills"])
 
 """
 Monitoring & Health Checks

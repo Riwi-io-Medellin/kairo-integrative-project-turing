@@ -13,7 +13,7 @@ async def ask_tutor(request: ChatRequest):
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     response = client.chat.completions.create(
-        model=os.getenv("MODEL_NAME", "llama-3.3-70b-versatile"),
+        model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
         messages=[
             {"role": "system", "content": "Eres un tutor experto de Riwi. Ayudas a estudiantes de programación de forma concisa y motivadora."},
             {"role": "user", "content": request.message}

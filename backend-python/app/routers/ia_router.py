@@ -27,7 +27,8 @@ async def generate_plan(request: GeneratePlanRequest):
             metadata={
                 "coder_id": request.coder.id,
                 "module": request.moodle_status.module_number,
-                "model": os.getenv("MODEL_NAME", "qwen-2.5-32b-instruct")
+                "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+                
             }
         )
     
@@ -48,5 +49,5 @@ async def health_check():
         "status": "ok",
         "message": "AI Service is running",
         "groq": groq_status,
-        "model": os.getenv("MODEL_NAME", "qwen-2.5-32b-instruct")
+        "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     }
