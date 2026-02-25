@@ -1,6 +1,6 @@
 /**
- * Riwi Learning Platform - Authentication Controller
- * Optimized for strict ENUM handling and consistent Role-Based Access Control.
+ * Riwi Learning Platform - Unified Authentication & User Controller
+ * Handles Session Management, Identity Verification, and Profile Updates.
  */
 
 import {
@@ -9,7 +9,14 @@ import {
   verifyPassword,
   findById,
 } from '../models/user.js';
-import { validateEmail, validatePassword } from '../utils/validators.js';
+import {
+  validateEmail,
+  validatePassword,
+  validateRole,
+  validateFullName,
+  sanitizeInput,
+} from '../utils/validators.js';
+import { query } from '../config/database.js';
 
 /**
  * Handles user registration with strict role normalization.
@@ -17,118 +24,81 @@ import { validateEmail, validatePassword } from '../utils/validators.js';
 export async function register(req, res) {
   try {
     const { email, password, fullName, full_name, role } = req.body;
-
-    // Consistency: Map both name variants
     const name = fullName || full_name;
 
-    // 1. Mandatory Field Validation
     if (!email || !password || !name || !role) {
-      return res.status(400).json({
-        error: 'All fields are required',
-        fields: ['email', 'password', 'fullName', 'role'],
-      });
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // 2. Format Validation
     if (!validateEmail(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
     if (!validatePassword(password)) {
-      return res.status(400).json({
-        error: 'Password must be at least 6 characters long',
-      });
+      return res
+        .status(400)
+        .json({ error: 'Password must be at least 6 characters' });
     }
 
-    /**
-     * 3. STRICT ROLE NORMALIZATION
-     * This prevents Supabase ENUM errors by forcing lowercase and trimming.
-     */
-    const normalizedRole = role.toLowerCase().trim();
-    const allowedRoles = ['coder', 'tl'];
-
-    if (!allowedRoles.includes(normalizedRole)) {
-      return res.status(400).json({
-        error: `Invalid role. Expected one of: ${allowedRoles.join(', ')}`,
-      });
+    if (!validateFullName(name)) {
+      return res
+        .status(400)
+        .json({ error: 'Name must be at least 3 characters' });
     }
 
-    // 4. Duplicate Check
+    if (!validateRole(role)) {
+      return res.status(400).json({ error: 'Invalid role provided' });
+    }
+
+    const normalizedRole = sanitizeInput(role).toLowerCase();
+
     const existingUser = await findByEmail(email);
     if (existingUser) {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
-    // 5. Database Insertion (Ensuring normalizedRole is sent to the model)
     const newUser = await create({
-      email,
+      email: sanitizeInput(email),
       password,
-      fullName: name,
+      fullName: sanitizeInput(name),
       role: normalizedRole,
     });
 
-    console.log(
-      `[Registration Success] User: ${email} | Role: ${normalizedRole}`
-    );
-
     res.status(201).json({
       message: 'User registered successfully',
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        fullName: newUser.full_name,
-        role: newUser.role, // Returned from DB
-      },
+      user: { id: newUser.id, email: newUser.email, role: newUser.role },
     });
   } catch (error) {
     console.error('[Registration Error]:', error);
-    res
-      .status(500)
-      .json({ error: 'Internal Server Error during registration' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
 /**
- * Handles user authentication and session creation.
+ * Handles user authentication and session initialization.
  */
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     const user = await findByEmail(email);
 
-    if (!user) {
-      console.log(`[Auth Log] Failed login: ${email} (User not found)`);
+    if (!user || !(await verifyPassword(password, user.password))) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const isValidPassword = await verifyPassword(password, user.password);
-    if (!isValidPassword) {
-      console.log(`[Auth Log] Failed login: ${email} (Wrong password)`);
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    /**
-     * 6. SESSION STORAGE
-     * We normalize the role again here to ensure frontend routing logic doesn't break.
-     */
-    const safeRole = user.role.toLowerCase().trim();
+    const safeRole = sanitizeInput(user.role).toLowerCase();
     req.session.userId = user.id;
     req.session.role = safeRole;
-
-    console.log(
-      `[Auth Log] Login successful: ${email} | DB Role: ${user.role}`
-    );
 
     res.json({
       message: 'Login successful',
       user: {
         id: user.id,
-        email: user.email,
         fullName: user.full_name,
         role: safeRole,
         firstLogin: user.first_login,
@@ -136,63 +106,109 @@ export async function login(req, res) {
     });
   } catch (error) {
     console.error('[Login Error]:', error);
-    res.status(500).json({ error: 'Internal Server Error during login' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
 /**
- * Destroys active session and clears auth cookies.
+ * Updates the first_login flag after completing the onboarding quiz.
  */
-export async function logout(req, res) {
+export async function updateFirstLoginStatus(req, res) {
   try {
-    req.session.destroy((err) => {
-      if (err)
-        return res.status(500).json({ error: 'Failed to destroy session' });
-      res.clearCookie('connect.sid');
-      res.json({ message: 'Logout successful' });
-    });
+    const queryText =
+      'UPDATE users SET first_login = false WHERE id = $1 RETURNING first_login';
+    const result = await query(queryText, [req.session.userId]);
+
+    res.json({ success: true, firstLogin: result.rows[0].first_login });
   } catch (error) {
-    console.error('[Logout Error]:', error);
-    res.status(500).json({ error: 'Internal Server Error during logout' });
+    console.error('[Onboarding Update Error]:', error);
+    res.status(500).json({ error: 'Failed to update onboarding status' });
   }
 }
 
 /**
- * Retrieves current authenticated user data from session.
+ * Updates basic user profile information (Self-service).
+ */
+export async function updateUserProfile(req, res) {
+  try {
+    const { fullName, email } = req.body;
+    const userId = req.session.userId;
+
+    const updates = {};
+
+    if (fullName) {
+      if (!validateFullName(fullName)) {
+        return res
+          .status(400)
+          .json({ error: 'Name must be at least 3 characters' });
+      }
+      updates.full_name = sanitizeInput(fullName);
+    }
+
+    if (email) {
+      if (!validateEmail(email)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+      }
+      updates.email = sanitizeInput(email);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const fields = Object.keys(updates)
+      .map((key, i) => `${key} = $${i + 1}`)
+      .join(', ');
+    const values = [...Object.values(updates), userId];
+    const queryText = `UPDATE users SET ${fields} WHERE id = $${values.length} RETURNING id, full_name, email`;
+
+    const result = await query(queryText, values);
+    res.json({ message: 'Profile updated', user: result.rows[0] });
+  } catch (error) {
+    console.error('[Profile Update Error]:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+}
+
+/**
+ * Retrieves current authenticated user context.
  */
 export async function getCurrentUser(req, res) {
   try {
     const user = await findById(req.session.userId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User session not found' });
-    }
+    if (!user) return res.status(404).json({ error: 'Session expired' });
 
     res.json({
       user: {
         id: user.id,
         email: user.email,
         fullName: user.full_name,
-        role: user.role.toLowerCase().trim(),
+        role: sanitizeInput(user.role).toLowerCase(),
         firstLogin: user.first_login,
       },
     });
   } catch (error) {
-    console.error('[GetCurrentUser Error]:', error);
-    res.status(500).json({ error: 'Failed to fetch user context' });
+    res.status(500).json({ error: 'Failed to fetch user' });
   }
 }
 
 /**
- * Verifies if a session is active and returns the role.
+ * Standard logout and session destruction.
+ */
+export async function logout(req, res) {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ error: 'Logout failed' });
+    res.clearCookie('riwi.sid');
+    res.json({ message: 'Logout successful' });
+  });
+}
+
+/**
+ * Simple session verification for frontend guards.
  */
 export async function checkAuth(req, res) {
-  if (req.session.userId) {
-    res.json({
-      authenticated: true,
-      role: req.session.role,
-    });
-  } else {
-    res.json({ authenticated: false });
-  }
+  res.json({
+    authenticated: !!req.session.userId,
+    role: req.session.role || null,
+  });
 }
