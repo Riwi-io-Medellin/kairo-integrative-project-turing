@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Análisis Clan {{ clan_name }}</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .stat { text-align: center; padding: 20px; border: 2px solid #3498db; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>📊 Análisis Estratégico Clan {{ clan_name.upper() }}</h1>
+    <p><strong>Fecha:</strong> {{ fecha }} | <strong>Total:</strong> {{ total_coders }} coders</p>
+    
+    <div class="stats">
+        <div class="stat"><strong>🧠 Autonomía</strong><br>{{ avg_autonomy }}/5</div>
+        <div class="stat"><strong>⏰ Gestión Tiempo</strong><br>{{ avg_time }}/5</div>
+        <div class="stat"><strong>💡 Resolución Problemas</strong><br>{{ avg_problems }}/5</div>
+        <div class="stat"><strong>💬 Comunicación</strong><br>{{ avg_comm }}/5</div>
+        <div class="stat"><strong>👥 Trabajo Equipo</strong><br>{{ avg_team }}/5</div>
+    </div>
+    
+    <h2>🎯 Análisis IA Completo</h2>
+    <div style="background: #f8f9fa; padding: 30px; border-left: 5px solid #e74c3c;">
+        {{ analisis_completo }}
+    </div>
+    
+    <h3>👥 Miembros:</h3>
+    <ul>
+        {% for nombre in coders_nombres %}
+        <li>{{ nombre }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -90,4 +90,4 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     logger.info("Riwi AI Service is starting up...")
-    logger.info(f"Target LLM Model: {os.getenv('MODEL_NAME')}")
+    logger.info(f"Target LLM Model: {os.getenv('MODEL_NAME', 'llama-3.3-70b-versatile')}")
