@@ -13,7 +13,7 @@ max-width: 100%;
     font-size: 13px;
     font-weight: bold;
     padding: 16px 20px;
-    background: rgba(127, 13, 242, 0.05);
+    background: #1A3A8F;
     border: 1px solid rgba(127, 13, 242, 0.2);
     border-radius: 9999px;
 
@@ -21,17 +21,25 @@ max-width: 100%;
 
 
 .main-header {
-position: relative; 
-top: 0;
-width: 100%;
-background: #070707dc;
-border-bottom: 1px solid rgba(0, 0, 0, 0.322);
-height: 110px;
+    position: relative; 
+    top: 0;
+    width: 100%;
+    height: 150px;
+
+    background: linear-gradient(
+    to bottom,
+    #18368acb 0%,
+    #1d3c92cb 60%,
+    rgba(18, 35, 82, 0.3) 85%,
+    rgba(0, 0, 0, 0) 100%
+    );
+
+    
 }
 
 .container-fluid img{
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 30px;
     margin-left: 200px ;
 }
@@ -58,7 +66,7 @@ height: 110px;
     color: white;
     font-weight: bold;
     font-size: 16px;
-    background-color: #3f0777;
+    background-color: #1A3A8F;
     padding: 10px 20px;
     border-radius: 10px;;
     transition: all 0.5s;
@@ -66,7 +74,7 @@ height: 110px;
 
 .btn-register:hover{
     transform: scale(1.1);
-    box-shadow: 0px 0px 25px #6b42ccd2;
+    box-shadow: 0px 0px 25px #1e42a7cb;
 }
 
 .hero-title{
@@ -96,8 +104,8 @@ font-weight:bold;
 
 .gradient-text {
 
-    color:  #7F0DF2;
-    text-shadow: 2px 2px 10px rgba(110, 8, 212, 0.493);
+    color:  #2855d3;
+    text-shadow: 2px 2px 10px #254cb8;
 }
 
 .hero-text{
@@ -107,7 +115,7 @@ font-weight:bold;
 
 
 .btn-btn1{
-background:#7F0DF2;
+background:#1A3A8F;
 color:white;
 font-weight: 700;
 font-size: 20px ;
@@ -115,7 +123,7 @@ border:none;
 border-radius:14px;
 width: 350px;
 border: 1px solid #7c7c7c65;
-box-shadow: 0px 0px 6px #895eee;
+box-shadow: 0px 4px 6px #1a4fdf;
 transition: all 0.5s;
 
 }
@@ -167,8 +175,8 @@ padding:100px;
     height: 450px;
     transition: all 0.25s ease;
     width: 99%;
-    background: linear-gradient(135deg, #1e0833 0%, #000000 82%);
-    border: 1px solid rgba(127, 13, 242, 0.3);
+    background: linear-gradient(135deg, #1A3A8F 0%, #000000 82%);
+    border: 1px solid #1A3A8F;
     box-shadow: 0px 0px 20px rgba(127, 13, 242, 0.1);
     border-radius: 16px;
 
@@ -176,8 +184,8 @@ padding:100px;
 
 .card-simple:hover{
     transform: translateY(-8px);
-    border: 2px solid rgba(67, 35, 156, 0.733);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    border: 2px solid #1A3A8F;
+    box-shadow: 0 10px 30px rgba(65, 65, 65, 0.35);
 
 }
 
@@ -238,7 +246,7 @@ border-radius: 30px;
 }
 
 .benefit-card {
-    background: linear-gradient(135deg, #1e0833 0%, #000000 82%);
+    background: linear-gradient(135deg, #1A3A8F 0%, #000000 82%);
     border: 1px solid rgba(127,13,242,0.3);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(39, 39, 39, 0.4);
@@ -269,7 +277,7 @@ border-radius: 30px;
 }
 
 .benefit-card ul li i {
-    color: #7F0DF2;
+    color: #1A3A8F;
 }
 
 
@@ -314,8 +322,8 @@ margin-bottom: 0;
     background: linear-gradient(
     to bottom,
     rgba(108, 10, 153, 0) 0%, 
-    rgba(51, 10, 65, 0.897) 30%, 
-    rgba(26, 6, 32, 0.897) 110%
+    #142b6b 30%, 
+    #193c9c 110%
     );
     color: white;
     padding: 60px 0 20px;
