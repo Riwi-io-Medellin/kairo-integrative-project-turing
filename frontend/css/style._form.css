@@ -6,8 +6,8 @@
 
 
 body{
-background-color: #000000;
-color:white;
+background-color: #ffffff;
+color:rgb(0, 0, 0);
 font-family:sans-serif;
 max-width: 100%;
 height: 100vh;
@@ -16,43 +16,57 @@ height: 100vh;
 
 .navbar-bar{
 position: relative; 
-top: 0;
+top: 0px;
 width: 100%;
-background: #000000ad;
-border-bottom: 1px solid rgba(52, 21, 82, 0.637);
-box-shadow: 10px 10px 70px rgba(37, 18, 80, 0.664);
-height: 110px;
-}
+background: #fffefeb2;
+border-bottom: 1px solid rgba(250, 250, 250, 0.637);
+box-shadow: 10px 15px 100px rgba(155, 155, 155, 0.664);
+
+
+
+} 
 
 
 .icon-box{
-background:#3f0777;
+background:#0a36c9;
 padding:2px;
 border-radius:10px;
 }
 .icon-box img{
 
-    width: 65px;
-    height: 65px;
+    width: 50px;
+    height: 50px;
 }
 
 .title-nav{
-color:#9236ee;
+color:#0a36c9;
 font-weight:700;
 text-transform:uppercase;
+font-size: 18px;
 }
 
 .subtitle-nav{
-color:#ccc;
+color:#000000;
+padding-top: 5px;
+font-size: 13px;
+}
+.text-end{
+    font-size: 16px;
 }
 
 .progress{
 height:6px;
-background:#66636e;
+background:#7e7e7e;
 }
 .progress-bar{
-    background-color: #651ab1;
+    background-color: #0a36c9;
 }
+
+
+
+
+
+
 
 .main-container{
 max-width:67%;
@@ -75,7 +89,7 @@ font-weight: bold;
 }
 
 .main-desc{
-color:#eeeeee;
+color:#000000;
 font-size: 18px;
 font-weight: 500;
 }
@@ -89,7 +103,7 @@ border-radius:20px;
 .card-question{
 padding:30px;
 border-radius:15px;
-color: #e4e4e4;
+color: #000000;
 background: radial-gradient(57.64% 100.51% at 40% 50%, rgba(87, 8, 233, 0.192) 0%, rgba(128, 13, 242, 0) 80%);
 font-weight: 800;
 box-shadow: 0px 1px 18px rgb(146, 146, 146);
@@ -123,7 +137,7 @@ padding:20px;
 border-radius:12px;
 cursor:pointer;
 display:block;
-color:rgb(226, 223, 223);
+color:rgb(0, 0, 0);
 font-weight: 800;
 }
 
