@@ -25,26 +25,6 @@ const SECTIONS = [
     { id: 8,  scale: 'SEQ_GLO', text: 'Una vez que entiendo...', opts: ['Todas las partes, entiendo el todo', 'El todo, veo cómo encajan las partes'] },
     { id: 9,  scale: 'ACT_REF', text: 'En un grupo de estudio sobre material difícil, es más probable que...', opts: ['Me lance a aportar ideas', 'Me quede callado/a escuchando'] },
     { id: 10, scale: 'SNS_INT', text: 'Me resulta más fácil...', opts: ['Aprender hechos', 'Aprender conceptos'] },
-    { id: 11, scale: 'VIS_VRB', text: 'En un libro con muchas imágenes y gráficos, tiendo a...', opts: ['Revisar bien las imágenes y gráficos', 'Concentrarme en el texto escrito'] },
-    { id: 12, scale: 'SEQ_GLO', text: 'Cuando resuelvo problemas matemáticos...', opts: ['Generalmente llego a la solución paso a paso', 'A menudo veo la solución pero luego debo trabajar los pasos'] },
-    { id: 13, scale: 'ACT_REF', text: 'En clases que he tomado...', opts: ['Generalmente conocí a muchos estudiantes', 'Rara vez conocí a muchos estudiantes'] },
-    { id: 14, scale: 'SNS_INT', text: 'Al leer no-ficción, prefiero...', opts: ['Algo que me enseñe datos o cómo hacer algo', 'Algo que me dé nuevas ideas en las que pensar'] },
-    { id: 15, scale: 'VIS_VRB', text: 'Me gustan los profesores...', opts: ['Que ponen muchos diagramas en la pizarra', 'Que pasan mucho tiempo explicando'] },
-    { id: 16, scale: 'SEQ_GLO', text: 'Cuando analizo una historia o novela...', opts: ['Pienso en los incidentes y trato de armar los temas', 'Solo sé cuáles son los temas al terminar de leer'] },
-    { id: 17, scale: 'ACT_REF', text: 'Cuando comienzo un problema de tarea, es más probable que...', opts: ['Empiece a trabajar en la solución de inmediato', 'Intente entender completamente el problema primero'] },
-    { id: 18, scale: 'SNS_INT', text: 'Prefiero la idea de...', opts: ['Certeza', 'Teoría'] },
-    { id: 19, scale: 'VIS_VRB', text: 'Recuerdo mejor...', opts: ['Lo que veo', 'Lo que escucho'] },
-    { id: 20, scale: 'SEQ_GLO', text: 'Es más importante para mí que un instructor...', opts: ['Exponga el material en pasos secuenciales claros', 'Me dé una visión general y relacione el material con otras materias'] },
-    { id: 21, scale: 'ACT_REF', text: 'Prefiero estudiar...', opts: ['En grupo', 'Solo/a'] },
-    { id: 22, scale: 'SNS_INT', text: 'Es más probable que me consideren...', opts: ['Cuidadoso/a con los detalles', 'Creativo/a en cómo hacer las cosas'] },
-    { id: 23, scale: 'VIS_VRB', text: 'Cuando recibo indicaciones a un lugar nuevo, prefiero...', opts: ['Un mapa', 'Instrucciones escritas'] },
-    { id: 24, scale: 'SEQ_GLO', text: 'Aprendo...', opts: ['A un ritmo bastante regular; si estudio duro, lo "entiendo"', 'A saltos; me confundo totalmente y de repente todo "hace clic"'] },
-    { id: 25, scale: 'ACT_REF', text: 'Primero prefiero...', opts: ['Intentar las cosas', 'Pensar cómo voy a hacerlo'] },
-    { id: 26, scale: 'SNS_INT', text: 'Cuando leo por placer, me gusta que los escritores...', opts: ['Digan claramente lo que quieren decir', 'Digan las cosas de maneras creativas e interesantes'] },
-    { id: 27, scale: 'VIS_VRB', text: 'Cuando veo un diagrama o esquema en clase, es más probable que recuerde...', opts: ['La imagen', 'Lo que el instructor dijo sobre ella'] },
-    { id: 28, scale: 'SEQ_GLO', text: 'Cuando considero un conjunto de información, es más probable que...', opts: ['Me concentre en detalles y pierda el panorama general', 'Intente entender el panorama general antes de entrar en detalles'] },
-    { id: 29, scale: 'ACT_REF', text: 'Recuerdo más fácilmente...', opts: ['Algo que he hecho', 'Algo en lo que he pensado mucho'] },
-    { id: 30, scale: 'SNS_INT', text: 'Cuando tengo que realizar una tarea, prefiero...', opts: ['Dominar una forma de hacerlo', 'Buscar nuevas formas de hacerlo'] },
 
 ]
 },
@@ -108,36 +88,7 @@ const SECTIONS = [
     opts: ['Cosas en las que puedo hacer clic, mover o intentar', 'Diseño interesante y características visuales', 'Descripciones escritas interesantes, listas y explicaciones', 'Canales de audio con música, programas de radio o entrevistas'],
     scoring: ['K', 'V', 'R', 'A']
     },
-    {
-    id: 11, text: 'Además del precio, ¿qué influiría más en tu decisión de comprar un libro de no-ficción?',
-    opts: ['Su apariencia es atractiva', 'Leer rápidamente algunas partes', 'Un amigo habla de él y lo recomienda', 'Tiene historias, experiencias y ejemplos reales'],
-    scoring: ['V', 'R', 'A', 'K']
-    },
-    {
-    id: 12, text: 'Usas un libro, CD o sitio web para aprender a tomar fotos con tu nueva cámara. Te gustaría tener...',
-    opts: ['La oportunidad de hacer preguntas y hablar sobre la cámara', 'Instrucciones escritas claras con listas sobre qué hacer', 'Diagramas que muestran la cámara y qué hace cada parte', 'Muchos ejemplos de fotos buenas y malas y cómo mejorarlas'],
-    scoring: ['A', 'R', 'V', 'K']
-    },
-    {
-    id: 13, text: '¿Prefieres un profesor o presentador que use...',
-    opts: ['Demostraciones, modelos o sesiones prácticas', 'Preguntas y respuestas, charlas o grupos de discusión', 'Apuntes, libros o lecturas', 'Diagramas, gráficos o tablas'],
-    scoring: ['K', 'A', 'R', 'V']
-    },
-    {
-    id: 14, text: 'Terminaste una competencia o examen y quisieras retroalimentación. Te gustaría recibirla...',
-    opts: ['Usando ejemplos de lo que hiciste', 'En una descripción escrita de tus resultados', 'De alguien que lo hable contigo', 'Con gráficos que muestren lo que lograste'],
-    scoring: ['K', 'R', 'A', 'V']
-    },
-    {
-    id: 15, text: 'Vas a elegir comida en un restaurante. Tú...',
-    opts: ['Eliges algo que ya has comido ahí antes', 'Escuchas al mesero o le preguntas a amigos', 'Eliges según las descripciones del menú', 'Ves qué están comiendo otros o miras fotos de cada platillo'],
-    scoring: ['K', 'A', 'R', 'V']
-    },
-    {
-    id: 16, text: 'Tienes que dar un discurso importante. Tú...',
-    opts: ['Haces diagramas o consigues gráficos para apoyar', 'Escribes unas palabras clave y practicas diciendo tu discurso', 'Escribes tu discurso y aprendes releyéndolo', 'Reúnes muchos ejemplos e historias para hacer el discurso real'],
-    scoring: ['V', 'A', 'R', 'K']
-    },
+
 ]
 },
  // ─────────────────────────────────────────────
@@ -207,16 +158,7 @@ const SECTIONS = [
     opts: ['Soy una persona receptiva', 'Soy una persona reservada', 'Soy una persona racional', 'Soy una persona responsable'],
     scoring: ['CE', 'RO', 'AC', 'AE']
     },
-    {
-    id: 11, text: 'Cuando aprendo, prefiero...',
-    opts: ['Involucrarme en nuevas experiencias', 'Pensar en los problemas', 'Construir conceptos e ideas', 'Ser activo/a y emprendedor/a'],
-    scoring: ['CE', 'RO', 'AC', 'AE']
-    },
-    {
-    id: 12, text: 'Aprendo mejor cuando...',
-    opts: ['Puedo relacionarme con el tema personalmente', 'Puedo usar mis observaciones', 'Puedo usar mis ideas como guía', 'Puedo juzgar el valor de lo aprendido'],
-    scoring: ['CE', 'RO', 'AC', 'AE']
-    },
+    
 ]
 }
 ];
