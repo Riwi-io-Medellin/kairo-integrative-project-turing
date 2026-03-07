@@ -83,7 +83,7 @@ body {
 /* Texto de "Sección X de 3" y "XX% Completado" */
 .nav-meta { text-align: right; }
 .nav-step  { font-size: 17px; color: var(--text); }
-.nav-pct   { font-size: 17px; font-weight: 600; color: var(--white); }
+.nav-pct   { font-size: 17px; font-weight: 600; color: #FFD43B; }
 
 
 .section-pills {
