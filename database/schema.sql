@@ -1,5 +1,8 @@
 -- ============================================
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- BASE DE DATOS SIMPLIFICADA
 -- Proyecto: Ruta Formativa Personalizada con IA
 -- Motor: PostgreSQL 12+
@@ -13,6 +16,8 @@
 -- Luego ejecuta este archivo con: psql ruta_formativa_ia -f tables_pi_postgresql.sql
 
 -- Crear tipos ENUM
+<<<<<<< HEAD
+=======
 =======
 -- RIWI LEARNING PLATFORM - DATABASE SCHEMA
 -- Motor: PostgreSQL 14+ (Supabase)
@@ -50,34 +55,25 @@ DROP TYPE IF EXISTS role_enum CASCADE;
 -- ============================================
 
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 CREATE TYPE role_enum AS ENUM ('coder', 'tl');
-
-CREATE TYPE learning_style_enum AS ENUM ('visual', 'auditory', 'kinesthetic', 'mixed');
-
+CREATE TYPE learning_style_enum AS ENUM ('visual', 'auditory', 'kinesthetic');
 CREATE TYPE activity_type_enum AS ENUM ('guided', 'semi_guided', 'autonomous');
-
 CREATE TYPE feedback_type_enum AS ENUM ('weekly', 'activity', 'general');
 
-CREATE TYPE risk_level_enum AS ENUM ('low', 'medium', 'high');
-
-CREATE TYPE report_target_enum AS ENUM ('coder', 'clan', 'cohort');
-
-CREATE TYPE ai_agent_enum AS ENUM ('learning_plan', 'report_generator', 'risk_detector');
-
 -- ============================================
--- 1. USERS (✅ CON TODOS LOS CAMPOS NECESARIOS)
+-- 1. USERS (Usuarios)
 -- ============================================
-
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    full_name VARCHAR(150) NOT NULL,  -- ✅ AGREGADO
     role role_enum NOT NULL,
-    first_login BOOLEAN DEFAULT TRUE,  -- ✅ AGREGADO
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 =======
@@ -87,10 +83,10 @@ CREATE INDEX idx_users_role ON users(role);
 COMMENT ON TABLE users IS 'Usuarios del sistema (coders y team leaders)';
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
 
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
--- 2. SOFT_SKILLS_ASSESSMENT
+-- 2. SOFT_SKILLS_ASSESSMENT (Diagnóstico)
 -- ============================================
-
 CREATE TABLE soft_skills_assessment (
     id SERIAL PRIMARY KEY,
     coder_id INT NOT NULL UNIQUE,
@@ -100,10 +96,11 @@ CREATE TABLE soft_skills_assessment (
     communication INT NOT NULL CHECK (communication BETWEEN 1 AND 5),
     teamwork INT NOT NULL CHECK (teamwork BETWEEN 1 AND 5),
     learning_style learning_style_enum NOT NULL,
-    assessed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 ALTER TABLE soft_skills_assessment ENABLE ROW LEVEL SECURITY;
 =======
@@ -112,21 +109,23 @@ CREATE INDEX idx_soft_skills_coder ON soft_skills_assessment(coder_id);
 COMMENT ON TABLE soft_skills_assessment IS 'Evaluación de habilidades blandas de los coders';
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
 
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
--- 3. MODULES
+-- 3. MODULES (Módulos)
 -- ============================================
-
 CREATE TABLE modules (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    total_weeks INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    total_weeks INT NOT NULL
 );
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 ALTER TABLE modules ENABLE ROW LEVEL SECURITY;
 
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
 -- 4. WEEKS (Semanas) 
 -- ============================================
@@ -144,21 +143,21 @@ ALTER TABLE weeks ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
 -- 5. MOODLE_PROGRESS (Progreso académico)
+<<<<<<< HEAD
+=======
 =======
 COMMENT ON TABLE modules IS 'Módulos académicos del bootcamp';
 
 -- ============================================
 -- 4. MOODLE_PROGRESS
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
 CREATE TABLE moodle_progress (
     id SERIAL PRIMARY KEY,
     coder_id INT NOT NULL,
     module_id INT NOT NULL,
     current_week INT NOT NULL,
-    weeks_completed JSONB DEFAULT '[]'::jsonb,
-    struggling_topics TEXT[],
     average_score DECIMAL(5,2) DEFAULT 0,
     struggling_topics TEXT[] DEFAULT '{}', -- ⬅️ AGREGADO
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -167,6 +166,12 @@ CREATE TABLE moodle_progress (
     FOREIGN KEY (module_id) REFERENCES modules(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+CREATE INDEX idx_score ON moodle_progress(average_score);
+
+-- ============================================
+-- 6. TOPICS (Temas)
+=======
 <<<<<<< HEAD
 ALTER TABLE moodle_progress ENABLE ROW LEVEL SECURITY;
 
@@ -183,8 +188,8 @@ COMMENT ON TABLE moodle_progress IS 'Progreso académico de los coders (simulaci
 -- ============================================
 -- 5. TOPICS
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
 CREATE TABLE topics (
     id SERIAL PRIMARY KEY,
     module_id INT NOT NULL,
@@ -193,6 +198,9 @@ CREATE TABLE topics (
     FOREIGN KEY (module_id) REFERENCES modules(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+CREATE INDEX idx_category ON topics(category);
+=======
 <<<<<<< HEAD
 ALTER TABLE topics ENABLE ROW LEVEL SECURITY;
 
@@ -203,21 +211,24 @@ CREATE INDEX idx_topics_category ON topics(category);
 
 COMMENT ON TABLE topics IS 'Temas específicos dentro de cada módulo';
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 
 -- ============================================
 -- 7. CODER_STRUGGLING_TOPICS (Relación N:M)
 -- ============================================
-
 CREATE TABLE coder_struggling_topics (
     id SERIAL PRIMARY KEY,
     coder_id INT NOT NULL,
     topic_id INT NOT NULL,
-    reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (coder_id, topic_id),
     FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+-- ============================================
+-- 8. COMPLEMENTARY_PLANS (Planes personalizados)
+=======
 <<<<<<< HEAD
 ALTER TABLE coder_struggling_topics ENABLE ROW LEVEL SECURITY;
 
@@ -231,8 +242,8 @@ COMMENT ON TABLE coder_struggling_topics IS 'Temas con los que los coders tienen
 -- ============================================
 -- 7. COMPLEMENTARY_PLANS (Planes generados por IA)
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
 CREATE TABLE complementary_plans (
     id SERIAL PRIMARY KEY,
     coder_id INT NOT NULL,
@@ -241,16 +252,27 @@ CREATE TABLE complementary_plans (
     week_number INT NOT NULL, 
     plan_content TEXT NOT NULL,
 =======
+<<<<<<< HEAD
+    week_number INT NOT NULL, 
+    plan_content TEXT NOT NULL,
+=======
     plan_content JSONB NOT NULL,  -- ✅ JSON generado por la IA
     soft_skills_snapshot JSONB,   -- ✅ Snapshot de soft skills al momento de generar
     moodle_status_snapshot JSONB, -- ✅ Snapshot de estado Moodle
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
     is_active BOOLEAN DEFAULT TRUE,
-    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (module_id) REFERENCES modules(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+CREATE INDEX idx_active ON complementary_plans(is_active);
+
+-- ============================================
+-- 9. PLAN_ACTIVITIES (Actividades)
+=======
 <<<<<<< HEAD
 ALTER TABLE complementary_plans ENABLE ROW LEVEL SECURITY;
 
@@ -267,8 +289,8 @@ COMMENT ON TABLE complementary_plans IS 'Planes de estudio personalizados genera
 -- ============================================
 -- 8. PLAN_ACTIVITIES
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
 CREATE TABLE plan_activities (
     id SERIAL PRIMARY KEY,
     plan_id INT NOT NULL,
@@ -277,6 +299,9 @@ CREATE TABLE plan_activities (
     description TEXT,
     estimated_time_minutes INT,
     activity_type activity_type_enum,
+<<<<<<< HEAD
+    order_index INT NOT NULL, 
+=======
 <<<<<<< HEAD
     order_index INT NOT NULL, 
     FOREIGN KEY (plan_id) REFERENCES complementary_plans(id) ON DELETE CASCADE
@@ -290,19 +315,20 @@ CREATE INDEX idx_plan ON plan_activities(plan_id);
 -- 10. ACTIVITY_PROGRESS (Progreso de actividades)
 =======
     skill_focus VARCHAR(100),  -- ✅ Para actividades de soft skills
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
     FOREIGN KEY (plan_id) REFERENCES complementary_plans(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_activities_plan ON plan_activities(plan_id);
-CREATE INDEX idx_activities_day ON plan_activities(day_number);
-
-COMMENT ON TABLE plan_activities IS 'Actividades diarias dentro de cada plan';
+CREATE INDEX idx_plan ON plan_activities(plan_id);
 
 -- ============================================
+<<<<<<< HEAD
+-- 10. ACTIVITY_PROGRESS (Progreso de actividades)
+=======
 -- 9. ACTIVITY_PROGRESS
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
 CREATE TABLE activity_progress (
     id SERIAL PRIMARY KEY,
     activity_id INT NOT NULL,
@@ -316,6 +342,12 @@ CREATE TABLE activity_progress (
     FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+CREATE INDEX idx_completed ON activity_progress(completed);
+
+-- ============================================
+-- 11. TL_FEEDBACK (Retroalimentación)
+=======
 <<<<<<< HEAD
 ALTER TABLE activity_progress ENABLE ROW LEVEL SECURITY;
 
@@ -333,42 +365,23 @@ COMMENT ON TABLE activity_progress IS 'Seguimiento del progreso de actividades p
 -- ============================================
 -- 10. EVIDENCE_SUBMISSIONS (✅ NUEVO)
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
-
-CREATE TABLE evidence_submissions (
-    id SERIAL PRIMARY KEY,
-    activity_id INT NOT NULL,
-    coder_id INT NOT NULL,
-    file_url TEXT,
-    link_url TEXT,
-    description TEXT,
-    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (activity_id) REFERENCES plan_activities(id) ON DELETE CASCADE,
-    FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE INDEX idx_evidence_activity ON evidence_submissions(activity_id);
-CREATE INDEX idx_evidence_coder ON evidence_submissions(coder_id);
-
-COMMENT ON TABLE evidence_submissions IS 'Evidencias subidas por coders para sus actividades';
-
--- ============================================
--- 11. TL_FEEDBACK
--- ============================================
-
 CREATE TABLE tl_feedback (
     id SERIAL PRIMARY KEY,
     coder_id INT NOT NULL,
     tl_id INT NOT NULL,
-    plan_id INT,  -- ✅ OPCIONAL: asociar feedback a un plan específico
     feedback_text TEXT NOT NULL,
     feedback_type feedback_type_enum,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (tl_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (plan_id) REFERENCES complementary_plans(id) ON DELETE SET NULL
+    FOREIGN KEY (tl_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+CREATE INDEX idx_coder ON tl_feedback(coder_id);
+CREATE INDEX idx_tl ON tl_feedback(tl_id);
+=======
 <<<<<<< HEAD
 ALTER TABLE tl_feedback ENABLE ROW LEVEL SECURITY;
 
@@ -380,91 +393,22 @@ CREATE INDEX idx_feedback_tl ON tl_feedback(tl_id);
 
 COMMENT ON TABLE tl_feedback IS 'Retroalimentación de Team Leaders a coders';
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 
 -- ============================================
--- 12. RISK_FLAGS (✅ NUEVO - Para detección de riesgo)
--- ============================================
-
-CREATE TABLE risk_flags (
-    id SERIAL PRIMARY KEY,
-    coder_id INT NOT NULL,
-    risk_level risk_level_enum NOT NULL,
-    reason TEXT NOT NULL,
-    auto_detected BOOLEAN DEFAULT TRUE,  -- ✅ TRUE si lo detectó la IA
-    detected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved BOOLEAN DEFAULT FALSE,
-    resolved_at TIMESTAMP NULL,
-    FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE INDEX idx_risk_coder ON risk_flags(coder_id);
-CREATE INDEX idx_risk_level ON risk_flags(risk_level);
-CREATE INDEX idx_risk_resolved ON risk_flags(resolved);
-
-COMMENT ON TABLE risk_flags IS 'Alertas de riesgo para coders (baja autonomía, bajo score, etc)';
-
--- ============================================
--- 13. AI_REPORTS (✅ NUEVO - Para reportes del TL)
--- ============================================
-
-CREATE TABLE ai_reports (
-    id SERIAL PRIMARY KEY,
-    target_type report_target_enum NOT NULL,
-    target_id INT NOT NULL,  -- ID del coder, clan o cohort
-    summary_text TEXT NOT NULL,
-    risk_level risk_level_enum,
-    recommendations TEXT,
-    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    viewed_by_tl BOOLEAN DEFAULT FALSE
-);
-
-CREATE INDEX idx_reports_target ON ai_reports(target_type, target_id);
-CREATE INDEX idx_reports_viewed ON ai_reports(viewed_by_tl);
-
-COMMENT ON TABLE ai_reports IS 'Reportes ejecutivos generados por IA para Team Leaders';
-
--- ============================================
--- 14. AI_GENERATION_LOG (✅ NUEVO - Trazabilidad)
--- ============================================
-
-CREATE TABLE ai_generation_log (
-    id SERIAL PRIMARY KEY,
-    coder_id INT,
-    agent_type ai_agent_enum NOT NULL,
-    input_payload JSONB NOT NULL,
-    output_payload JSONB NOT NULL,
-    model_name VARCHAR(100),
-    execution_time_ms INT,
-    success BOOLEAN DEFAULT TRUE,
-    error_message TEXT,
-    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (coder_id) REFERENCES users(id) ON DELETE SET NULL
-);
-
-CREATE INDEX idx_log_agent ON ai_generation_log(agent_type);
-CREATE INDEX idx_log_coder ON ai_generation_log(coder_id);
-CREATE INDEX idx_log_date ON ai_generation_log(generated_at);
-
-COMMENT ON TABLE ai_generation_log IS 'Log de todas las generaciones de IA (auditoría)';
-
--- ============================================
--- VISTAS ÚTILES
+-- VISTAS
 -- ============================================
 
 CREATE VIEW v_coder_dashboard AS
 SELECT 
     u.id,
     u.email,
-    u.full_name,
     ssa.autonomy,
-    ssa.time_management,
     ssa.learning_style,
     m.name AS module_name,
-    mp.current_week,
     mp.average_score,
     COUNT(DISTINCT pa.id) AS total_activities,
-    SUM(CASE WHEN ap.completed = TRUE THEN 1 ELSE 0 END) AS completed_activities,
-    ROUND((SUM(CASE WHEN ap.completed = TRUE THEN 1 ELSE 0 END)::NUMERIC / NULLIF(COUNT(DISTINCT pa.id), 0)) * 100, 2) AS completion_percentage
+    SUM(CASE WHEN ap.completed = TRUE THEN 1 ELSE 0 END) AS completed_activities
 FROM users u
 LEFT JOIN soft_skills_assessment ssa ON u.id = ssa.coder_id
 LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
@@ -473,44 +417,32 @@ LEFT JOIN complementary_plans cp ON u.id = cp.coder_id AND cp.is_active = TRUE
 LEFT JOIN plan_activities pa ON cp.id = pa.plan_id
 LEFT JOIN activity_progress ap ON pa.id = ap.activity_id AND ap.coder_id = u.id
 WHERE u.role = 'coder'
-GROUP BY u.id, u.email, u.full_name, ssa.autonomy, ssa.time_management, ssa.learning_style, m.name, mp.current_week, mp.average_score;
-
-COMMENT ON VIEW v_coder_dashboard IS 'Vista consolidada del dashboard de cada coder';
-
--- ============================================
+GROUP BY u.id, u.email, ssa.autonomy, ssa.learning_style, m.name, mp.average_score;
 
 CREATE VIEW v_coder_risk_analysis AS
 SELECT 
     u.id,
     u.email,
-    u.full_name,
     ssa.autonomy,
-    ssa.time_management,
     mp.average_score,
-    COALESCE(rf.risk_level, 'low') AS current_risk_level,
     CASE 
-        WHEN ssa.autonomy <= 2 AND mp.average_score < 70 THEN 'high'
-        WHEN ssa.autonomy <= 2 OR mp.average_score < 70 THEN 'medium'
-        ELSE 'low'
-    END AS calculated_risk_level,
-    COUNT(DISTINCT pa.id) AS total_activities,
-    SUM(CASE WHEN ap.completed = TRUE THEN 1 ELSE 0 END) AS completed_activities
+        WHEN ssa.autonomy <= 2 AND mp.average_score < 70 THEN 'HIGH_RISK'
+        WHEN ssa.autonomy <= 2 OR mp.average_score < 70 THEN 'MEDIUM_RISK'
+        ELSE 'LOW_RISK'
+    END AS risk_level
 FROM users u
 LEFT JOIN soft_skills_assessment ssa ON u.id = ssa.coder_id
 LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
-LEFT JOIN risk_flags rf ON u.id = rf.coder_id AND rf.resolved = FALSE
-LEFT JOIN complementary_plans cp ON u.id = cp.coder_id AND cp.is_active = TRUE
-LEFT JOIN plan_activities pa ON cp.id = pa.plan_id
-LEFT JOIN activity_progress ap ON pa.id = ap.activity_id AND ap.coder_id = u.id
 WHERE u.role = 'coder'
-GROUP BY u.id, u.email, u.full_name, ssa.autonomy, ssa.time_management, mp.average_score, rf.risk_level
-ORDER BY calculated_risk_level DESC, mp.average_score ASC;
-
-COMMENT ON VIEW v_coder_risk_analysis IS 'Análisis de riesgo de coders para dashboard de TL';
+ORDER BY risk_level DESC, mp.average_score ASC;
 
 -- ============================================
--- CONFIRMACIÓN
+-- Confirmación
 -- ============================================
+<<<<<<< HEAD
+SELECT ' Base de datos (esquema) configurada correctamente' AS status;
+SELECT COUNT(*) AS number_of_tables FROM information_schema.tables 
+=======
 <<<<<<< HEAD
 SELECT ' Base de datos (esquema) configurada correctamente' AS status;
 SELECT COUNT(*) AS number_of_tables FROM information_schema.tables 
@@ -520,4 +452,5 @@ SELECT '✅ Schema consolidado creado correctamente' AS status;
 SELECT COUNT(*) AS total_tables 
 FROM information_schema.tables 
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 WHERE table_schema = 'public' AND table_type = 'BASE TABLE';

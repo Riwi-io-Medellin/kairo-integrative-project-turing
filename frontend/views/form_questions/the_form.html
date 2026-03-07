@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soft Skills Diagnostic</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./../../css/style._form.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <div class="navbar-top">
+                <div class="logo-area">
+                    <div class="logo-title">Soft Skills Diagnostic</div>
+                </div>
+                <div class="nav-meta">
+                    <div class="nav-step" id="navStep">Sección 1 de 3</div>
+                    <div class="nav-pct" id="navPct">0% Completado</div>
+                </div>
+            </div>
+
+            <div class="section-pills">
+                <div class="pill pill-1 active" id="pill-0">
+                    <span class="pill-dot" style="background:var(--s1-color)"></span>
+                    Habilidades Blandas
+                </div>
+                <div class="pill pill-2" id="pill-1">
+                    <span class="pill-dot" style="background:var(--s2-color)"></span>
+                    Habilidades Técnicas
+                </div>
+                <div class="pill pill-3" id="pill-2">
+                    <span class="pill-dot" style="background:var(--s3-color)"></span>
+                    Liderazgo
+                </div>
+            </div>
+
+            <div class="progress-bars">
+                <div class="prog-segment prog-1" id="prog-0">
+                    <div class="prog-fill" id="fill-0"></div>
+                </div>
+                <div class="prog-segment prog-2" id="prog-1">
+                    <div class="prog-fill" id="fill-1"></div>
+                </div>
+                <div class="prog-segment prog-3" id="prog-2">
+                    <div class="prog-fill" id="fill-2"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main">
+        <div class="section-header" id="sectionHeader"></div>
+
+        <div class="q-card active" id="qCard">
+            <div class="q-num" id="qNum"></div>
+            <div class="q-text" id="qText"></div>
+            <div id="qOptions"></div>
+            <div class="q-footer">
+                <button class="btn btn-ghost" id="btnBack" onclick="goBack()">← Anterior</button>
+                <div class="q-counter"><strong id="qCurrent">1</strong> / <span id="qTotal">10</span></div>
+                <button class="btn btn-primary" id="btnNext" onclick="goNext()" disabled>Siguiente →</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- SECTION TRANSITION -->
+    <div class="section-transition" id="sectionTransition">
+        <div class="transition-icon" id="transIcon"></div>
+        <div class="transition-t" id="transTitle"></div>
+        <div class="transition-s" id="transDesc"></div>
+        <div class="transition-bar">
+            <div class="transition-fill" id="transFill"></div>
+        </div>
+    </div>
+
+    <!-- COMPLETION -->
+    <div class="completion" id="completion">
+        <div class="comp-check">✓</div>
+        <div class="comp-title">¡Diagnóstico Completo!</div>
+        <div class="comp-sub">Has respondido todas las preguntas. Tus resultados están siendo procesados.</div>
+        <div class="comp-stats">
+            <div class="comp-stat">
+                <div class="comp-stat-n">30</div>
+                <div class="comp-stat-l">Preguntas</div>
+            </div>
+            <div class="comp-stat">
+                <div class="comp-stat-n">3</div>
+                <div class="comp-stat-l">Secciones</div>
+            </div>
+            <div class="comp-stat">
+                <div class="comp-stat-n" id="compTime">—</div>
+                <div class="comp-stat-l">Minutos</div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-comp" onclick="alert('Todavia no jefe')">Ver mis resultados →</button>
+    </div>
+
+    <script src="./../../js/form_questions/questions_form.js"></script>
+</body>
+
+</html>

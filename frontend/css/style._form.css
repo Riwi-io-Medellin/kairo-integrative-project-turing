@@ -1,0 +1,518 @@
+/* 
+    RESET & BASE
+    Limpia márgenes y define fuente/colores globales
+ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Variables de color — cambia aquí para cambiar todo */
+:root {
+    --bg:       #F0F5FF;   /* fondo principal */
+    --surface:  #1A3A8F;   /* tarjetas */
+    --surface2: rgba(108,143,255,.1);   /* opciones dentro de tarjetas */
+    --border:   #C8D9F5;   /* bordes sutiles */
+    --text:     #ffffff;   /* texto normal */
+    --muted:    #4A5880;   /* texto secundario/gris */
+    --white:    #ffffff;
+    --black:       #000000;
+    
+
+    /* Color de cada sección */
+    --s1: hsl(212, 100%, 71%);  /* azul  - sección 1 */
+    --s2: #b196ff;  /* morado - sección 2 */
+    --s3: #29e9a2;  /* verde  - sección 3 */
+}
+
+body {
+    width: 100%;;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    height: auto;
+    
+}
+
+/*
+    NAVBAR — barra superior fija
+    Contiene: logo, progreso, pastillas de sección
+   */
+.navbar{
+    position: relative;
+    top: 0;
+    z-index: 1000;
+    background: #1A3A8F;
+}
+
+.navbar-inner {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 10px 0 10px;
+}
+
+/* Fila superior: logo a la izquierda, meta a la derecha */
+.navbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 200px;
+    padding-bottom: 15px;
+    padding-top: 10px;
+}
+
+
+
+.logo-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--white);
+    
+}
+
+/* Texto de "Sección X de 3" y "XX% Completado" */
+.nav-meta { text-align: right; }
+.nav-step  { font-size: 17px; color: var(--text); }
+.nav-pct   { font-size: 17px; font-weight: 600; color: #FFD43B; }
+
+
+.section-pills {
+    display: flex;
+    justify-content: space-around;
+}
+
+.pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: 1px solid ;
+    transition: all .3s ease;
+}
+
+.pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+}
+
+/* Sección 1 — azul */
+.pill-1               { border-color: rgb(255, 255, 255); color: rgba(108,143,255,.4); }
+.pill-1.active        { background: rgba(108, 142, 255, 0.418); border-color: var(--white); color: var(--white); }
+.pill-1.done          { border-color: rgba(108, 142, 255, 0.699); color: rgba(108,143,255,.6); }
+
+/* Sección 2 — morado */
+.pill-2               { border-color: rgba(167, 139, 250, 0.712); color: rgba(167, 139, 250, 0.74); }
+.pill-2.active        { background: rgba(108, 142, 255, 0.418); border-color: var(--white); color: var(--white); }
+.pill-2.done          { border-color: rgba(167, 139, 250, 0.685); color: rgba(167, 139, 250, 0.822); }
+
+/* Sección 3 — verde */
+.pill-3               { border-color: rgb(52, 211, 153);  color: rgba(52, 211, 153, 0.644); }
+.pill-3.active        { background: rgba(108, 142, 255, 0.418); border-color: var(--white); color: var(--white);  }
+.pill-3.done          { border-color: rgba(52, 211, 153, 0.863);  color: rgba(52, 211, 153, 0.863); }
+
+
+/*
+    BARRAS DE PROGRESO (una por sección)
+   Cada barra se llena según cuántas preguntas respondiste */
+
+.progress-bars {
+    display: flex;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.prog-segment {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.prog-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    transition: width .5s ease;  
+}
+
+/* Color de relleno según sección */
+.prog-1 .prog-fill { background: var(--s1); }
+.prog-2 .prog-fill { background: var(--s2); }
+.prog-3 .prog-fill { background: var(--s3); }
+
+/* Cuando la sección está completa, fuerza 100% */
+.prog-segment.done .prog-fill { width: 100% !important; }
+
+
+.main{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+    margin-top: 20px;
+}
+
+
+    /* 
+    CABECERA DE SECCIÓN
+    Título + descripción que cambian en cada sección
+    */
+.section-header {
+    margin-bottom: 36px;
+    animation: fadeUp .5s ease both;
+}
+
+/* Etiqueta pequeña arriba del título (ej: "Sección 1 · Habilidades Blandas") */
+.section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    margin-left: 1rem;
+}
+
+.tag-1 { background: rgba(108, 142, 255, 0.205); color: var(--s1); border: 1px solid rgba(108,143,255,.2); }
+.tag-2 { background: rgba(167,139,250,.1); color: var(--s2); border: 1px solid rgba(167,139,250,.2); }
+.tag-3 { background: rgba(52,211,153,.1);  color: var(--s3); border: 1px solid rgba(52,211,153,.2); }
+
+.section-title {
+    font-family:  sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #1A2340;
+    margin-bottom: 10px;
+    margin-left: 1rem;
+}
+
+.section-desc {
+    font-size: 15px;
+    color: rgb(75, 75, 75) ;
+    line-height: 1.6;
+    max-width: 80%;
+    margin-left: 1rem;
+}
+
+
+/*
+    TARJETA DE PREGUNTA
+    Contenedor blanco-oscuro que muestra la pregunta actual
+   */
+.q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+
+/* "Pregunta 3 de 30" */
+.q-num {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 16px;
+}
+.q-num span { color: var(--s1); }  /* el número resaltado */
+
+/* Texto de la pregunta */
+.q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+    color:var(--text);
+    line-height: 1.4;
+    margin-bottom: 32px;
+}
+
+
+/* 
+    OPCIONES DE RESPUESTA — tipo elección múltiple
+    */
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s ease;
+    text-align: left;
+    width: 100%;
+    color: #f8f8f8;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    
+}
+
+/* Hover: se mueve un poco a la derecha */
+.option:hover {
+    border-color: var(--s1);
+    background: rgba(145, 169, 248, 0.07);
+    transform: translateX(4px);
+}
+
+/* Opción seleccionada */
+.option.selected {
+    border-color: var(--s1);
+    background:  #6884bb;
+    color: var(--white);
+}
+
+/* Letras A / B / C / D */
+.option-letter {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(#1A2340);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all .2s;
+    font-family: 'Syne', sans-serif;
+}
+
+/* La letra se pinta cuando se selecciona */
+.option.selected .option-letter {
+    background: var(--s1);
+    border-color: var(--s1);
+    color: var(--bg);
+}
+
+
+/* 
+    OPCIONES DE ESCALA (1 al 5)  */
+    
+.scale-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.scale-opt {
+    flex: 1;
+    min-width: 52px;
+    padding: 14px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all .2s ease;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Hover: sube un poco */
+.scale-opt:hover {
+    border-color: var(--s1);
+    background: rgba(156, 177, 248, 0.37);
+    transform: translateY(-2px);
+}
+
+/* Número seleccionado */
+.scale-opt.selected {
+    border-color: var(--s1);
+    background: rgba(108,143,255,.12);
+    color: var(--s1);
+}
+
+
+
+/* 
+PIE DE TARJETA — botones Anterior / Siguiente*/
+.q-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+/* Botón base */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all .2s ease;
+}
+
+/* Botón fantasma (Anterior) */
+.btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.btn-ghost:hover    { color: var(--text); border-color: var(--border); }
+.btn-ghost:disabled { opacity: .3; cursor: default; }
+
+/* Botón primario (Siguiente) */
+.btn-primary {
+    background: #69cbf1;
+    color: var(--white);
+    font-weight: 600;
+}
+.btn-primary:hover    { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(108,143,255,.3); }
+.btn-primary:disabled { opacity: .4; cursor: default; transform: none; box-shadow: none; }
+
+/* Contador "1 / 10" en el centro */
+.q-counter         { font-size: 13px; color: var(--muted); }
+.q-counter strong  { color: var(--text); }
+
+
+/* 
+PANTALLA DE TRANSICIÓN ENTRE SECCIONES
+Aparece brevemente al pasar de una sección a otra
+ */
+.section-transition {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    padding: 40px;
+}
+.section-transition.show {
+    display: flex;
+    animation: fadeIn .4s ease;
+}
+
+.transition-t    { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--white); }
+.transition-s    { font-size: 15px; color: var(--muted); max-width: 380px; line-height: 1.6; }
+
+/* Barra de carga animada que dura ~2 segundos */
+.transition-bar  { width: 200px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.transition-fill { height: 100%; width: 0%; border-radius: 2px; animation: loadBar 1.8s ease forwards; }
+
+
+/* 
+   PANTALLA FINAL — diagnóstico completado
+ */
+.completion {
+    display: none;
+    position: fixed; inset: 0; z-index: 300;
+    background: var(--bg);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 40px;
+}
+.completion.show { display: flex; animation: fadeIn .5s ease; }
+
+/* Círculo con checkmark */
+.comp-check {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--s3), #059669);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin-bottom: 12px;
+    animation: popIn .5s .2s both;
+}
+
+.comp-title  { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--white); animation: fadeUp .5s .3s both; }
+.comp-sub    { font-size: 16px; color: var(--muted); max-width: 400px; line-height: 1.6; animation: fadeUp .5s .4s both; }
+
+/* Mini estadísticas: preguntas / secciones / tiempo */
+.comp-stats  { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; justify-content: center; animation: fadeUp .5s .5s both; }
+.comp-stat   { padding: 12px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-align: center; }
+.comp-stat-n { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--white); }
+.comp-stat-l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+.btn-comp    { margin-top: 16px; padding: 14px 32px; font-size: 15px; animation: fadeUp .5s .6s both; }
+
+
+/*
+ANIMACIONES
+   */
+
+/* Sube desde abajo al aparecer */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Baja al salir */
+@keyframes fadeDown {
+    to { opacity: 0; transform: translateY(-16px); }
+}
+
+/* Simple aparición */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Barra de carga que se rellena */
+@keyframes loadBar {
+    to { width: 100%; }
+}
+
+/* Círculo de check que aparece con rebote */
+@keyframes popIn {
+    from { transform: scale(.6); opacity: 0; }
+    to   { transform: scale(1);  opacity: 1; }
+}
+
+/* Clases que se agregan/quitan con JS para animar la tarjeta */
+.q-enter { animation: fadeUp   .4s ease both; }
+.q-exit  { animation: fadeDown .3s ease both; }
+
+
+/* RESPONSIVE — móvil */
+@media (max-width: 600px) {
+    .q-card         { padding: 24px 20px; }
+    .section-pills  { gap: 4px; }
+    .pill           { padding: 3px 8px; font-size: 10px; }
+}

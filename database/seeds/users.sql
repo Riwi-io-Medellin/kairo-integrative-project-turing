@@ -4,13 +4,22 @@
 -- Proyecto: Ruta Formativa Personalizada con IA
 -- Versión: 2.1 - SIMPLIFICADA
 =======
+<<<<<<< HEAD
+-- DATOS DE PRUEBA (SEED DATA)
+-- Proyecto: Ruta Formativa Personalizada con IA
+-- Versión: 2.1 - SIMPLIFICADA
+=======
 -- SEEDS - DATOS DE PRUEBA
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
 
 BEGIN;
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
 -- 1. USUARIOS
 -- ============================================
@@ -55,6 +64,8 @@ VALUES (7, 2, 3, 2, 2, 3, 'kinesthetic');
 -- ============================================
 -- 3. MÓDULOS
 -- ============================================
+<<<<<<< HEAD
+=======
 =======
 -- LIMPIAR DATOS EXISTENTES
 TRUNCATE TABLE ai_generation_log CASCADE;
@@ -90,6 +101,7 @@ INSERT INTO soft_skills_assessment (coder_id, autonomy, time_management, problem
 (6, 5, 5, 5, 5, 5, 'visual'),
 (7, 2, 3, 2, 2, 3, 'mixed');
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 
 INSERT INTO modules (name, description, total_weeks) VALUES
 ('Fundamentos de Python', 'Introducción a la programación con Python', 4),
@@ -98,6 +110,9 @@ INSERT INTO modules (name, description, total_weeks) VALUES
 ('Bases de Datos', 'SQL, PostgreSQL y diseño de BD', 4);
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 -- ============================================
 -- 4. SEMANAS
 -- ============================================
@@ -136,6 +151,8 @@ INSERT INTO moodle_progress (coder_id, module_id, current_week, struggling_topic
 -- ============================================
 -- 6. TEMAS (CATÁLOGO)
 -- ============================================
+<<<<<<< HEAD
+=======
 =======
 -- PROGRESO EN MOODLE
 INSERT INTO moodle_progress (coder_id, module_id, current_week, average_score, weeks_completed, struggling_topics) VALUES
@@ -145,22 +162,29 @@ INSERT INTO moodle_progress (coder_id, module_id, current_week, average_score, w
 (6, 4, 4, 97.0, '[1,2,3]'::jsonb, ARRAY[]::text[]),
 (7, 4, 1, 45.0, '[]'::jsonb, ARRAY['sql básico', 'select', 'where']);
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 
 INSERT INTO topics (module_id, name, category) VALUES
 -- Módulo 4: Bases de Datos
 (4, 'Relaciones entre tablas', 'SQL'),
 (4, 'Consultas SQL complejas', 'SQL'),
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 (4, 'Normalización de bases de datos', 'SQL'),
 (4, 'Índices y optimización', 'SQL'),
 (4, 'Diagrama ER', 'Diseño'),
 (4, 'Funciones agregadas', 'SQL'),
 (4, 'Subconsultas', 'SQL');
+<<<<<<< HEAD
+=======
 =======
 (4, 'Normalización de bases de datos', 'Diseño'),
 (4, 'Índices y optimización', 'Performance'),
 (4, 'SELECT y WHERE básicos', 'SQL Fundamentos');
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 
 -- ============================================
 -- 7. TEMAS DE DIFICULTAD DEL CODER
@@ -169,6 +193,9 @@ INSERT INTO topics (module_id, name, category) VALUES
 -- Juan tiene dificultad con relaciones y consultas
 INSERT INTO coder_struggling_topics (coder_id, topic_id) VALUES
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
 (3, 1), -- Relaciones entre tablas
 (3, 2); -- Consultas SQL complejas
 
@@ -345,6 +372,9 @@ BEGIN
     RAISE NOTICE ' Planes activos: %', (SELECT COUNT(*) FROM complementary_plans WHERE is_active = TRUE);
     RAISE NOTICE ' Actividades: %', (SELECT COUNT(*) FROM plan_activities);
     RAISE NOTICE ' Feedbacks: %', (SELECT COUNT(*) FROM tl_feedback);
+<<<<<<< HEAD
+END $$;
+=======
 END $$;
 =======
 (3, 1),
@@ -366,3 +396,4 @@ SELECT COUNT(*) as total_usuarios FROM users;
 SELECT COUNT(*) as total_coders FROM users WHERE role = 'coder';
 SELECT COUNT(*) as total_tls FROM users WHERE role = 'tl';
 >>>>>>> f01f3b0882bfbaca9cd0e1a605973cf0aa353fa6
+>>>>>>> b228e6cee3a901865302bd0a6ccf1d6853b09965
