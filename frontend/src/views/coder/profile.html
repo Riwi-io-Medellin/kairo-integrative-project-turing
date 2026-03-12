@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil · Kairo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../../assets/css/profile_coder.css" />
+</head>
+<body>
+
+<div class="shell">
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="../../../assets/img/logo.png" alt="Kairo" class="sidebar-logo" onerror="this.style.display='none'" />
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" href="./dashboard.html">
+        <span class="nav-icon"><i class="fa-solid fa-table-columns"></i></span>
+        Dashboard
+      </a>
+      <a class="nav-link" href="./IAtrainer.html">
+        <span class="nav-icon"><i class="fa-solid fa-microchip"></i></span>
+        AI Trainer
+      </a>
+      <a class="nav-link" href="./assignment.html">
+        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        Actividades
+      </a>
+      <a class="nav-link active" href="./profile.html">
+        <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
+        Mi Perfil
+      </a>
+    </nav>
+    <div class="sidebar-profile">
+      <button class="btn-logout" id="btn-logout" title="Cerrar sesión">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="topbar-title"><i class="fa-solid fa-user-circle"></i> Mi Perfil</h1>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="btn-theme" title="Cambiar tema">
+          <i class="fa-solid fa-moon" id="icon-moon"></i>
+          <i class="fa-solid fa-sun" id="icon-sun" style="display:none"></i>
+        </button>
+        <a href="./dashboard.html" class="topbar-profile-btn">
+          <div class="topbar-avatar"><i class="fa-solid fa-table-columns"></i></div>
+          <span>Dashboard</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Loading state -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="loading-box">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Cargando perfil<span class="loading-dots"></span></p>
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner hidden" id="error-banner">
+      <i class="fa-solid fa-plug-circle-xmark"></i>
+      <div>
+        <strong>No se pudo cargar el perfil</strong>
+        <p id="error-msg">Verifica que el backend esté corriendo.</p>
+      </div>
+      <button class="btn-retry" onclick="loadProfile()">
+        <i class="fa-solid fa-rotate-right"></i> Reintentar
+      </button>
+    </div>
+
+    <!-- Profile Content -->
+    <section class="profile-layout hidden" id="profile-content">
+
+      <!-- LEFT: Profile Card -->
+      <div class="profile-card glass-card">
+        <!-- Avatar -->
+        <div class="avatar-wrapper">
+          <div class="avatar-circle" id="avatar-circle">
+            <i class="fa-solid fa-user avatar-icon"></i>
+          </div>
+          <div class="avatar-overlay" id="avatar-overlay">
+            <i class="fa-solid fa-camera"></i>
+          </div>
+        </div>
+
+        <h2 class="profile-name" id="profile-name">—</h2>
+        <p class="profile-jobtitle" id="profile-jobtitle">Full-Stack Developer in Training</p>
+        <span class="clan-badge" id="profile-clan">—</span>
+
+        <div class="divider"></div>
+
+        <!-- Contact info -->
+        <div class="contact-list">
+          <div class="contact-item" id="contact-phone" style="display:none">
+            <i class="fa-solid fa-phone contact-icon"></i>
+            <span id="val-phone">—</span>
+          </div>
+          <div class="contact-item">
+            <i class="fa-solid fa-envelope contact-icon"></i>
+            <span id="val-email">—</span>
+          </div>
+          <div class="contact-item" id="contact-location" style="display:none">
+            <i class="fa-solid fa-location-dot contact-icon"></i>
+            <span id="val-location">—</span>
+          </div>
+          <div class="contact-item" id="contact-module">
+            <i class="fa-solid fa-graduation-cap contact-icon"></i>
+            <span id="val-module">—</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Social links -->
+        <div class="social-links" id="social-links">
+          <!-- populated by JS -->
+        </div>
+
+        <!-- CV Button -->
+        <button class="btn-cv" id="btn-cv" onclick="downloadCV()">
+          <i class="fa-solid fa-file-arrow-down"></i> Descargar CV
+        </button>
+
+        <!-- Edit profile button -->
+        <button class="btn-edit" id="btn-edit" onclick="toggleEditMode()">
+          <i class="fa-solid fa-pen-to-square"></i> Editar Perfil
+        </button>
+      </div>
+
+      <!-- RIGHT: Profile Content -->
+      <div class="profile-right">
+
+        <!-- Bio section -->
+        <div class="glass-card profile-section">
+          <div class="section-header">
+            <h3><i class="fa-solid fa-quote-left"></i> Sobre mí</h3>
+          </div>
+          <p class="bio-text" id="bio-text">—</p>
+        </div>
+
+        <!-- Soft Skills -->
+        <div class="glass-card profile-section" id="softskills-section">
+          <div class="section-header">
+            <h3><i class="fa-solid fa-brain"></i> Habilidades Blandas</h3>
+            <span class="badge-avg" id="softskills-avg">—</span>
+          </div>
+          <div class="skills-grid" id="soft-skills-grid">
+            <!-- populated by JS -->
+          </div>
+          <div class="learning-style-block" id="learning-style-block" style="display:none">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <p class="ls-label">Estilo de aprendizaje</p>
+              <p class="ls-value" id="ls-value">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Skills -->
+        <div class="glass-card profile-section">
+          <div class="section-header">
+            <h3><i class="fa-solid fa-code"></i> Habilidades Técnicas</h3>
+            <button class="btn-add-small" onclick="addTechSkill()" id="btn-add-skill" style="display:none">
+              <i class="fa-solid fa-plus"></i> Agregar
+            </button>
+          </div>
+          <div class="tech-skills-list" id="tech-skills-list">
+            <p class="empty-state">No hay habilidades técnicas registradas aún.</p>
+          </div>
+        </div>
+
+        <!-- Experience -->
+        <div class="glass-card profile-section">
+          <div class="section-header">
+            <h3><i class="fa-solid fa-briefcase"></i> Experiencia</h3>
+            <button class="btn-add-small" onclick="addExperience()" id="btn-add-exp" style="display:none">
+              <i class="fa-solid fa-plus"></i> Agregar
+            </button>
+          </div>
+          <div id="experience-list">
+            <p class="empty-state">No hay experiencia registrada aún.</p>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="glass-card profile-section">
+          <div class="section-header">
+            <h3><i class="fa-solid fa-graduation-cap"></i> Educación</h3>
+          </div>
+          <div id="education-list">
+            <p class="empty-state">Sin entradas educativas.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay hidden" id="edit-modal">
+      <div class="modal glass-card">
+        <div class="modal-header">
+          <h3>Editar Perfil</h3>
+          <button class="modal-close" onclick="closeEditModal()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="edit-form" onsubmit="saveProfile(event)">
+          <div class="form-group">
+            <label>Título / Rol</label>
+            <input type="text" id="edit-jobtitle" placeholder="ej. Full-Stack Developer in Training" maxlength="80" />
+          </div>
+          <div class="form-group">
+            <label>Sobre mí</label>
+            <textarea id="edit-bio" rows="4" maxlength="500" placeholder="Cuéntanos sobre ti..."></textarea>
+            <span class="char-count" id="bio-chars">0/500</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="text" id="edit-phone" placeholder="+57 300 000 0000" />
+            </div>
+            <div class="form-group">
+              <label>Ubicación</label>
+              <input type="text" id="edit-location" placeholder="Medellín, Colombia" />
+            </div>
+          </div>
+
+          <h4 class="form-section-title">Redes Sociales</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-brands fa-github"></i> GitHub</label>
+              <input type="url" id="edit-github" placeholder="https://github.com/usuario" />
+            </div>
+            <div class="form-group">
+              <label><i class="fa-brands fa-linkedin"></i> LinkedIn</label>
+              <input type="url" id="edit-linkedin" placeholder="https://linkedin.com/in/usuario" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-brands fa-discord"></i> Discord</label>
+              <input type="text" id="edit-discord" placeholder="usuario#1234" />
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-globe"></i> Portfolio</label>
+              <input type="url" id="edit-portfolio" placeholder="https://miportfolio.com" />
+            </div>
+          </div>
+
+          <h4 class="form-section-title">Habilidades Técnicas</h4>
+          <div id="tech-skills-editor">
+            <!-- populated by JS -->
+          </div>
+          <button type="button" class="btn-add-skill" onclick="addTechSkillRow()">
+            <i class="fa-solid fa-plus"></i> Agregar habilidad técnica
+          </button>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+            <button type="submit" class="btn-save" id="btn-save">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div class="toast-coder hidden" id="toast">
+  <i class="fa-solid fa-circle-check" id="toast-icon"></i>
+  <span id="toast-msg">—</span>
+</div>
+
+<script src="../../../assets/js/profile.js" type="module"></script>
+</body>
+</html>
