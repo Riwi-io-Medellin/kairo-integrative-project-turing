@@ -7,6 +7,25 @@ const API = 'http://localhost:3000/api';
 
 /* ── State ── */
 let profileData = null;
+let _csrfToken = null;
+
+/* ─────────────────────────────────────────
+   CSRF TOKEN HELPER
+───────────────────────────────────────── */
+async function getCsrfToken() {
+  if (_csrfToken) return _csrfToken;
+  try {
+    const res = await fetch(`${API}/csrf-token`, { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      _csrfToken = data.csrfToken;
+    }
+  } catch {
+    // If CSRF endpoint is unreachable, proceed without token (dev fallback)
+    console.warn('[CSRF] Could not fetch CSRF token');
+  }
+  return _csrfToken || '';
+}
 
 /* ─────────────────────────────────────────
    BOOT
@@ -70,9 +89,14 @@ function renderProfile(p) {
   }
 
   // Avatar
-  if (p.avatarUrl) {
+  if (p.avatarUrl && /^https?:\/\//i.test(p.avatarUrl)) {
     const circle = document.getElementById('avatar-circle');
-    circle.innerHTML = `<img src="${p.avatarUrl}" alt="Avatar" class="avatar-img" />`;
+    const img = document.createElement('img');
+    img.src = p.avatarUrl;
+    img.alt = 'Avatar';
+    img.className = 'avatar-img';
+    circle.innerHTML = '';
+    circle.appendChild(img);
   }
 
   // Bio
@@ -115,8 +139,10 @@ function renderSocialLinks(links) {
 
   container.innerHTML = items.map(([key, url]) => {
     const meta = iconMap[key] || { icon: 'fa-solid fa-link', label: key };
-    const isLink = url.startsWith('http');
-    return `<a ${isLink ? `href="${url}" target="_blank" rel="noopener"` : ''} class="social-btn" title="${meta.label}">
+    const isSafeLink = /^https?:\/\//i.test(url);
+    if (!isSafeLink) return ''; // skip unsafe URLs
+    const safeHref = encodeURI(url);
+    return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="social-btn" title="${meta.label}">
       <i class="${meta.icon}"></i>
     </a>`;
   }).join('');
@@ -318,10 +344,14 @@ async function saveProfile(event) {
       technicalSkills: techSkills,
     };
 
+    const csrfToken = await getCsrfToken();
     const res = await fetch(`${API}/coder/profile`, {
       method: 'PUT',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrfToken,
+      },
       body: JSON.stringify(payload),
     });
 
@@ -367,8 +397,7 @@ async function downloadCV() {
       a.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    const printKey = navigator.platform?.includes('Mac') ? 'Cmd+P' : 'Ctrl+P';
-    showToast(`CV generado. Usa ${printKey} para imprimir como PDF.`, 'success');
+    showToast('CV generado. Usa Ctrl+P / Cmd+P para imprimir como PDF.', 'success');
   } catch (err) {
     showToast('Error al generar CV: ' + err.message, 'error');
   } finally {
@@ -410,7 +439,12 @@ function setupTheme() {
 function setupLogout() {
   document.getElementById('btn-logout')?.addEventListener('click', async () => {
     try {
-      await fetch(`${API}/auth/logout`, { method: 'POST', credentials: 'include' });
+      const csrfToken = await getCsrfToken();
+      await fetch(`${API}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'x-csrf-token': csrfToken },
+      });
     } finally {
       window.location.href = '../auth/login.html';
     }

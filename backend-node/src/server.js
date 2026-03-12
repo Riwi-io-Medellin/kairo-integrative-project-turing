@@ -13,6 +13,7 @@ import cors from 'cors';
 import session from 'express-session';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import { doubleCsrf } from 'csrf-csrf';
 import passport from './config/passport.js';
 import { pool, testConnection } from './config/database.js';
 import { connectMongo } from './config/mongodb.js';
@@ -53,6 +54,31 @@ const _corsOptions = {
 app.use(cors(_corsOptions));
 app.options('/{*path}', cors(_corsOptions)); // preflight — Express 5 syntax
 
+/* ════════════════════════════════════════
+   CSRF ORIGIN GUARD
+   Lightweight CSRF mitigation: state-changing requests must originate
+   from a trusted origin. JSON Content-Type + SameSite=lax already
+   block simple cross-site form attacks; this adds an explicit origin
+   check as defense-in-depth.
+════════════════════════════════════════ */
+app.use((req, res, next) => {
+  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+  if (safeMethods.includes(req.method)) return next();
+
+  const origin = req.headers.origin || req.headers.referer || '';
+
+  // Allow server-to-server calls (no origin header)
+  if (!origin) return next();
+
+  const trusted = ALLOWED_ORIGINS.some(
+    (allowed) => origin === allowed || origin.startsWith(allowed + '/')
+  );
+  if (!trusted) {
+    return res.status(403).json({ error: 'CSRF: origin not allowed' });
+  }
+  next();
+});
+
 /* ── Standard middleware ── */
 app.use(morgan('dev'));
 app.use(express.json());
@@ -80,6 +106,37 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+/* ════════════════════════════════════════
+   CSRF PROTECTION  (double-submit cookie pattern via csrf-csrf)
+   - GET  /api/csrf-token  → returns a CSRF token the frontend must include
+     as X-CSRF-Token header on every state-changing request.
+   - Safe methods (GET, HEAD, OPTIONS) are excluded automatically.
+   - OAuth callbacks are excluded so the redirect flow is not broken.
+════════════════════════════════════════ */
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
+  getSecret: () => process.env.SESSION_SECRET || 'dev_csrf_secret_fallback',
+  cookieName: isProduction ? '__Host-psifi.x-csrf-token' : 'x-csrf-token',
+  cookieOptions: {
+    secure: isProduction,
+    httpOnly: true,
+    sameSite: isProduction ? 'none' : 'lax',
+  },
+  size: 64,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+});
+
+/* Expose token endpoint — called once on page load */
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: generateToken(req, res) });
+});
+
+/* Apply CSRF protection globally — but skip OAuth callbacks */
+app.use((req, res, next) => {
+  const oauthPaths = ['/api/auth/google/callback', '/api/auth/github/callback'];
+  if (oauthPaths.includes(req.path)) return next();
+  doubleCsrfProtection(req, res, next);
+});
 
 const globalLimiter = rateLimit({
   windowMs: 60 * 1000,

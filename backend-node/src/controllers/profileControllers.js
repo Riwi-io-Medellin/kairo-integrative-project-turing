@@ -220,22 +220,35 @@ export async function generateCoderCV(req, res) {
       };
     }
 
+    /* ─── HTML escape helper (XSS prevention) ───────────────── */
+    const esc = (str) =>
+      String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+
+    /** Allow only http/https URLs in src/href attributes */
+    const safeUrl = (url) =>
+      /^https?:\/\//i.test(String(url ?? '')) ? esc(url) : '';
+
     /* ─── Build HTML ─────────────────────────────────────────── */
     const skillLevel = { beginner: '●○○', intermediate: '●●○', advanced: '●●●' };
 
     const techSkillsHtml = (extProfile.technicalSkills || []).length > 0
       ? (extProfile.technicalSkills).map(s =>
-          `<span class="skill-tag">${s.name} <small>${skillLevel[s.level] || ''}</small></span>`
+          `<span class="skill-tag">${esc(s.name)} <small>${esc(skillLevel[s.level] || '')}</small></span>`
         ).join('')
       : '<p class="muted">No technical skills listed yet.</p>';
 
     const softSkillsHtml = softSkills
       ? `
-        <div class="skill-bar"><span>Autonomy</span><div class="bar"><div style="width:${(softSkills.autonomy/5)*100}%"></div></div></div>
-        <div class="skill-bar"><span>Time Management</span><div class="bar"><div style="width:${(softSkills.time_management/5)*100}%"></div></div></div>
-        <div class="skill-bar"><span>Problem Solving</span><div class="bar"><div style="width:${(softSkills.problem_solving/5)*100}%"></div></div></div>
-        <div class="skill-bar"><span>Communication</span><div class="bar"><div style="width:${(softSkills.communication/5)*100}%"></div></div></div>
-        <div class="skill-bar"><span>Teamwork</span><div class="bar"><div style="width:${(softSkills.teamwork/5)*100}%"></div></div></div>
+        <div class="skill-bar"><span>Autonomy</span><div class="bar"><div style="width:${parseFloat(softSkills.autonomy)/5*100}%"></div></div></div>
+        <div class="skill-bar"><span>Time Management</span><div class="bar"><div style="width:${parseFloat(softSkills.time_management)/5*100}%"></div></div></div>
+        <div class="skill-bar"><span>Problem Solving</span><div class="bar"><div style="width:${parseFloat(softSkills.problem_solving)/5*100}%"></div></div></div>
+        <div class="skill-bar"><span>Communication</span><div class="bar"><div style="width:${parseFloat(softSkills.communication)/5*100}%"></div></div></div>
+        <div class="skill-bar"><span>Teamwork</span><div class="bar"><div style="width:${parseFloat(softSkills.teamwork)/5*100}%"></div></div></div>
       `
       : '<p class="muted">Soft skills assessment pending.</p>';
 
@@ -243,11 +256,11 @@ export async function generateCoderCV(req, res) {
       ? extProfile.experience.map(e => `
         <div class="cv-entry">
           <div class="cv-entry-header">
-            <strong>${e.role}</strong>
-            <span class="cv-date">${e.startDate} – ${e.endDate || 'Present'}</span>
+            <strong>${esc(e.role)}</strong>
+            <span class="cv-date">${esc(e.startDate)} – ${esc(e.endDate || 'Present')}</span>
           </div>
-          <div class="cv-entry-sub">${e.company}</div>
-          ${e.description ? `<p>${e.description}</p>` : ''}
+          <div class="cv-entry-sub">${esc(e.company)}</div>
+          ${e.description ? `<p>${esc(e.description)}</p>` : ''}
         </div>`).join('')
       : '<p class="muted">No experience entries yet.</p>';
 
@@ -255,16 +268,19 @@ export async function generateCoderCV(req, res) {
       ? extProfile.education.map(e => `
         <div class="cv-entry">
           <div class="cv-entry-header">
-            <strong>${e.degree} in ${e.field}</strong>
-            <span class="cv-date">${e.startYear} – ${e.endYear || 'Present'}</span>
+            <strong>${esc(e.degree)} in ${esc(e.field)}</strong>
+            <span class="cv-date">${esc(String(e.startYear || ''))} – ${esc(String(e.endYear || 'Present'))}</span>
           </div>
-          <div class="cv-entry-sub">${e.institution}</div>
+          <div class="cv-entry-sub">${esc(e.institution)}</div>
         </div>`).join('')
-      : `<div class="cv-entry"><strong>Riwi Bootcamp</strong><div class="cv-entry-sub">${user.module_name || 'Full-Stack Development'}</div></div>`;
+      : `<div class="cv-entry"><strong>Riwi Bootcamp</strong><div class="cv-entry-sub">${esc(user.module_name || 'Full-Stack Development')}</div></div>`;
 
     const socialHtml = Object.entries(extProfile.socialLinks || {})
       .filter(([, v]) => v)
-      .map(([k, v]) => `<a href="${v}" class="cv-social">${k}</a>`)
+      .map(([k, v]) => {
+        const safe = safeUrl(v);
+        return safe ? `<a href="${safe}" class="cv-social">${esc(k)}</a>` : '';
+      })
       .join('');
 
     const cvHtml = `<!DOCTYPE html>
@@ -272,7 +288,7 @@ export async function generateCoderCV(req, res) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV — ${user.full_name}</title>
+  <title>CV — ${esc(user.full_name)}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #222; }
@@ -319,18 +335,18 @@ export async function generateCoderCV(req, res) {
     <!-- HEADER -->
     <header class="cv-header">
       <div class="cv-avatar">
-        ${extProfile.avatarUrl
-          ? `<img src="${extProfile.avatarUrl}" alt="Avatar">`
+        ${safeUrl(extProfile.avatarUrl)
+          ? `<img src="${safeUrl(extProfile.avatarUrl)}" alt="Avatar">`
           : '👤'}
       </div>
       <div class="cv-title">
-        <h1>${user.full_name}</h1>
-        <p class="job">${extProfile.jobTitle || 'Full-Stack Developer in Training'}</p>
+        <h1>${esc(user.full_name)}</h1>
+        <p class="job">${esc(extProfile.jobTitle || 'Full-Stack Developer in Training')}</p>
         <div class="meta">
-          ${user.email ? `<span>✉ ${user.email}</span>` : ''}
-          ${extProfile.phone ? `<span>📞 ${extProfile.phone}</span>` : ''}
-          ${extProfile.location ? `<span>📍 ${extProfile.location}</span>` : ''}
-          ${user.clan ? `<span>🏅 Clan ${user.clan}</span>` : ''}
+          ${user.email ? `<span>✉ ${esc(user.email)}</span>` : ''}
+          ${extProfile.phone ? `<span>📞 ${esc(extProfile.phone)}</span>` : ''}
+          ${extProfile.location ? `<span>📍 ${esc(extProfile.location)}</span>` : ''}
+          ${user.clan ? `<span>🏅 Clan ${esc(user.clan)}</span>` : ''}
         </div>
       </div>
     </header>
@@ -341,7 +357,7 @@ export async function generateCoderCV(req, res) {
         ${extProfile.bio ? `
         <div class="cv-section">
           <h2>About Me</h2>
-          <p class="bio-text">${extProfile.bio}</p>
+          <p class="bio-text">${esc(extProfile.bio)}</p>
         </div>` : ''}
 
         <div class="cv-section">
@@ -353,16 +369,16 @@ export async function generateCoderCV(req, res) {
         <div class="cv-section">
           <h2>Languages</h2>
           <div class="lang-list">
-            ${extProfile.languages.map(l => `<span class="lang-tag">${l}</span>`).join('')}
+            ${extProfile.languages.map(l => `<span class="lang-tag">${esc(l)}</span>`).join('')}
           </div>
         </div>` : ''}
 
         <div class="cv-section">
           <h2>Contact</h2>
           <div class="cv-contact">
-            ${user.email ? `<p>✉ ${user.email}</p>` : ''}
-            ${extProfile.phone ? `<p>📞 ${extProfile.phone}</p>` : ''}
-            ${extProfile.location ? `<p>📍 ${extProfile.location}</p>` : ''}
+            ${user.email ? `<p>✉ ${esc(user.email)}</p>` : ''}
+            ${extProfile.phone ? `<p>📞 ${esc(extProfile.phone)}</p>` : ''}
+            ${extProfile.location ? `<p>📍 ${esc(extProfile.location)}</p>` : ''}
           </div>
           ${socialHtml ? `<div style="margin-top:10px">${socialHtml}</div>` : ''}
         </div>
@@ -393,7 +409,7 @@ export async function generateCoderCV(req, res) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader(
       'Content-Disposition',
-      `inline; filename="CV_${user.full_name.replace(/\s+/g, '_')}.html"`
+      `inline; filename="CV_${user.full_name.replace(/[^\w\s-]/g, '').replace(/\s+/g, '_')}.html"`
     );
     res.send(cvHtml);
   } catch (error) {
