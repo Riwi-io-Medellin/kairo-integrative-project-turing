@@ -60,9 +60,6 @@
             <h1 class="topbar-title">
               Clan <span id="clan-heading" class="gradient-text"></span>
             </h1>
-            <button class="btn-ghost" id="btn-report" onclick="generateReportClan(sessionStorage.getItem('clan'))">
-              <i class="fa-solid fa-file-pdf"></i> Reporte PDF Clan
-            </button>
           </div>
           <p class="topbar-sub" id="topbar-date">—</p>
         </div>
@@ -136,6 +133,9 @@
             <div class="card-head">
               <h2 class="card-title">Coders</h2>
               <div class="filter-row" id="filter-row">
+                 <button class="btn-ghost" id="btn-report" onclick="generateReportClan(sessionStorage.getItem('clan'))">
+                  <i class="fa-solid fa-file-pdf"></i> Reporte PDF Clan
+                </button>
                 <button class="chip active" data-filter="all">Todos</button>
                 <button class="chip" data-filter="risk">En riesgo</button>
                 <button class="chip" data-filter="pending">Pendientes</button>

@@ -300,59 +300,6 @@ el('btn-report')?.addEventListener('click', () => {
   generatePDF(selectedCoder);
 });
 
-function generatePDF(c) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-  doc.setTextColor(109, 40, 217);
-  doc.text('Kairo — Reporte del Coder', 14, 20);
-
-  doc.setTextColor(30, 30, 30);
-  doc.setFontSize(11);
-
-  const rows = [
-    ['Nombre', c.full_name],
-    ['Email', c.email],
-    ['Clan', cap(c.clan || '—')],
-    [
-      'Score promedio',
-      c.average_score > 0 ? `${parseFloat(c.average_score).toFixed(1)}%` : '—',
-    ],
-    ['Semana actual', c.current_week > 0 ? `Semana ${c.current_week}` : '—'],
-    [
-      'Estilo de aprendizaje',
-      c.learning_style ? cap(c.learning_style) : 'Sin diagnóstico',
-    ],
-    [
-      'Estado de riesgo',
-      c.risk_level ? `${cap(c.risk_level)}` : 'Sin flags activos',
-    ],
-    ['—————————', '—————————'],
-    ['Autonomía', c.autonomy ? `${c.autonomy}/5` : '—'],
-    ['Gestión tiempo', c.time_management ? `${c.time_management}/5` : '—'],
-    ['Resolución', c.problem_solving ? `${c.problem_solving}/5` : '—'],
-    ['Comunicación', c.communication ? `${c.communication}/5` : '—'],
-    ['Trabajo en equipo', c.teamwork ? `${c.teamwork}/5` : '—'],
-  ];
-
-  let y = 34;
-  rows.forEach(([k, v]) => {
-    doc.setFont(undefined, 'bold');
-    doc.text(`${k}:`, 14, y);
-    doc.setFont(undefined, 'normal');
-    doc.text(String(v), 75, y);
-    y += 9;
-  });
-
-  doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
-  doc.text(`Generado: ${new Date().toLocaleString('es-CO')}`, 14, 280);
-  doc.save(
-    `reporte-${c.id}-${c.full_name.toLowerCase().replace(/\s+/g, '-')}.pdf`
-  );
-}
-
 /* Logout */
 function wireLogout() {
   el('btn-logout').addEventListener('click', () => sessionManager.logout());
