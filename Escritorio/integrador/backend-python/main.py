@@ -13,13 +13,12 @@ FIX: os.getenv("NODE_URL", "*") was injecting the literal string "*" into
      allow_origins — invalid when allow_credentials=True (FastAPI startup crash).
 FIX: @app.on_event("startup") is deprecated — replaced with lifespan.
 """
-
+from dotenv import load_dotenv
 import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 
 from app.routers import roadmap, cards, chat, reports
 
@@ -42,6 +41,7 @@ def _build_origins() -> list[str]:
         "http://localhost:3000",
         "http://localhost:5500",
         "http://127.0.0.1:5500",
+        "http://localhost:5501",
     ]
     for env_var in ["NODE_URL", "FRONTEND_URL"]:
         val = os.getenv(env_var)
@@ -70,7 +70,7 @@ app = FastAPI(
     version="2.0.0",
     lifespan=lifespan,
 )
-
+app.include_router(reports.router, prefix="/api/reports")  # GET /generate-pdf/{clan} moved to reports.py for better organization
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_build_origins(),

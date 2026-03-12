@@ -25,7 +25,13 @@ router = APIRouter(tags=["TL Reports"])
 def _get_clients():
     return (
         OpenAI(api_key=os.getenv("OPENAI_API_KEY")),
-        create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
+        create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+    )
+
+# Agrega esta función
+def _get_supabase():
+    return (
+        create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
     )
 
 # ════════════════════════════════════════
@@ -40,6 +46,45 @@ class ReportRequest(BaseModel):
     high_risk_count:       int
     top_struggling_topics: list[str] = []
     soft_skills_summary:   dict = {}
+
+
+def _analyze_coder_with_ai(coder: dict, skills: dict, progress: dict) -> dict:
+    from groq import Groq
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    
+    prompt = f"""
+Eres un analista educativo del bootcamp Riwi. Analiza el rendimiento de este coder.
+
+DATOS:
+- Nombre: {coder.get('full_name')}
+- Promedio: {progress.get('average_score', 'N/A')}/100
+- Semana actual: {progress.get('current_week', 'N/A')}
+- Autonomia: {skills.get('autonomy', 'N/A')}
+- Manejo del tiempo: {skills.get('time_management', 'N/A')}
+- Resolucion de problemas: {skills.get('problem_solving', 'N/A')}
+- Comunicacion: {skills.get('communication', 'N/A')}
+- Trabajo en equipo: {skills.get('teamwork', 'N/A')}
+- Estilo de aprendizaje: {skills.get('learning_style', 'N/A')}
+
+Responde SOLO en JSON valido sin tildes ni caracteres especiales:
+{{
+    "risk_level": "bajo|medio|alto|critico",
+    "summary": "resumen del estado actual",
+    "strengths": "fortalezas identificadas",
+    "risks": "areas de mejora",
+    "recommendations": "3 recomendaciones para el TL"
+}}
+"""
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {"role": "system", "content": "Eres un analista educativo. Responde solo con JSON valido."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=600,
+        temperature=0.6,
+    )
+    return json.loads(completion.choices[0].message.content)
 
 @router.post("/generate-report")
 async def generate_report(req: ReportRequest):
@@ -122,51 +167,51 @@ Return ONLY valid JSON:
 # PDF GENERATION
 # ════════════════════════════════════════
 
-@router.get("/generate-pdf/{clan}")
-async def generate_clan_pdf(clan: str):
-    """
-    Called by Node.js: GET /generate-pdf/{clan}
-    Fetches coders + their soft skills from Supabase,
-    builds a PDF report, returns it as a downloadable file.
-    """
-    _, supabase = _get_clients()
-
+@router.post("/generar-informe-pdf")
+async def generate_clan_pdf(coder_id: int):
+    supabase = _get_supabase()
     try:
-        # Fetch all coders in the clan with their soft skills
+        # 1. Fetch coder
         coders_result = supabase.table("users") \
             .select("id, full_name, email, first_login") \
-            .eq("clan", clan) \
+            .eq("id", coder_id) \
             .eq("role", "coder") \
             .execute()
 
         coders = coders_result.data or []
         if not coders:
-            raise HTTPException(status_code=404, detail=f"No coders found in clan '{clan}'")
+            raise HTTPException(status_code=404, detail=f"No coders found with ID '{coder_id}'")
 
-        # Fetch soft skills for each coder
+        # 2. Fetch soft skills
         coder_ids = [c["id"] for c in coders]
         skills_result = supabase.table("soft_skills_assessment") \
             .select("coder_id, autonomy, time_management, problem_solving, communication, teamwork, learning_style") \
             .in_("coder_id", coder_ids) \
             .execute()
-
         skills_map = {s["coder_id"]: s for s in (skills_result.data or [])}
 
-        # Fetch moodle progress
+        # 3. Fetch moodle progress
         progress_result = supabase.table("moodle_progress") \
             .select("coder_id, average_score, current_week") \
             .in_("coder_id", coder_ids) \
             .execute()
         progress_map = {p["coder_id"]: p for p in (progress_result.data or [])}
 
-        # Build PDF
-        pdf_bytes = _build_pdf(clan, coders, skills_map, progress_map)
+        # 4. Genera análisis IA
+        coder = coders[0]
+        skills = skills_map.get(coder["id"], {})
+        progress = progress_map.get(coder["id"], {})
+        ai_analysis = _analyze_coder_with_ai(coder, skills, progress)
+
+        # 5. Build PDF
+        coder_name = coder["full_name"]
+        pdf_bytes = _build_pdf(coder_name, coders, skills_map, progress_map, ai_analysis)
 
         return StreamingResponse(
             io.BytesIO(pdf_bytes),
             media_type="application/pdf",
             headers={
-                "Content-Disposition": f"attachment; filename=clan_{clan}_report.pdf"
+                "Content-Disposition": f"attachment; filename=ID_{coder_id}_report.pdf"
             }
         )
 
@@ -175,9 +220,12 @@ async def generate_clan_pdf(clan: str):
     except Exception as e:
         logger.error(f"PDF generation failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+def _safe_str(value) -> str:
+    if isinstance(value, list):
+        return ", ".join(str(i) for i in value)
+    return str(value) if value else "N/A"
 
-
-def _build_pdf(clan: str, coders: list, skills_map: dict, progress_map: dict) -> bytes:
+def _build_pdf(coder_name: str, coders: list, skills_map: dict, progress_map: dict, ai_analysis: dict = {}) -> bytes:
     """Builds the clan PDF using fpdf2."""
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -187,7 +235,7 @@ def _build_pdf(clan: str, coders: list, skills_map: dict, progress_map: dict) ->
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_fill_color(109, 40, 217)   # Kairo purple
     pdf.set_text_color(255, 255, 255)
-    pdf.cell(0, 14, f"  Clan {clan.upper()} — Performance Report", fill=True, ln=True)
+    pdf.cell(0, 14, f"  Coder {coder_name} - Performance Report", fill=True, ln=True)
 
     pdf.set_text_color(100, 100, 100)
     pdf.set_font("Helvetica", "", 10)
@@ -229,7 +277,7 @@ def _build_pdf(clan: str, coders: list, skills_map: dict, progress_map: dict) ->
 
         if ss:
             pdf.cell(0, 6,
-                f"Soft skills — Autonomy: {ss.get('autonomy','?')}  "
+                f"Soft skills - Autonomy: {ss.get('autonomy','?')}  "
                 f"Time Mgmt: {ss.get('time_management','?')}  "
                 f"Problem Solving: {ss.get('problem_solving','?')}  "
                 f"Communication: {ss.get('communication','?')}  "
@@ -247,4 +295,32 @@ def _build_pdf(clan: str, coders: list, skills_map: dict, progress_map: dict) ->
         pdf.line(10, pdf.get_y(), 200, pdf.get_y())
         pdf.ln(4)
 
-    return bytes(pdf.output())
+    if ai_analysis:
+        pdf.add_page()
+        pdf.set_font("Helvetica", "B", 14)
+        pdf.set_fill_color(109, 40, 217)
+        pdf.set_text_color(255, 255, 255)
+        pdf.cell(0, 12, "  Analisis IA - Kairo", fill=True, ln=True)
+        pdf.ln(4)
+
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.set_text_color(30, 30, 30)
+        risk = ai_analysis.get('risk_level', 'N/A').upper()
+        pdf.cell(0, 8, f"Nivel de riesgo: {risk}", ln=True)
+        pdf.ln(3)
+
+        for label, key in [
+            ("Resumen", "summary"),
+            ("Fortalezas", "strengths"),
+            ("Riesgos", "risks"),
+            ("Recomendaciones", "recommendations")
+        ]:
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.set_text_color(109, 40, 217)
+            pdf.cell(0, 7, label, ln=True)
+            pdf.set_font("Helvetica", "", 10)
+            pdf.set_text_color(60, 60, 60)
+            pdf.multi_cell(0, 6, _safe_str(ai_analysis.get(key)))
+            pdf.ln(3)
+
+    return bytes(pdf.output())  # ← return al final
