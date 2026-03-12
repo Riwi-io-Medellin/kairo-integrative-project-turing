@@ -205,7 +205,20 @@ export async function generateCoderCV(req, res) {
     const softSkills = softSkillsResult.rows[0] || null;
 
     let extProfile = await CoderProfile.findOne({ userId });
-    if (!extProfile) extProfile = { bio: '', jobTitle: '', phone: '', location: '', socialLinks: {}, technicalSkills: [], experience: [], education: [], languages: [] };
+    if (!extProfile) {
+      extProfile = {
+        bio: '',
+        jobTitle: '',
+        phone: '',
+        location: '',
+        avatarUrl: '',
+        socialLinks: {},
+        technicalSkills: [],
+        experience: [],
+        education: [],
+        languages: [],
+      };
+    }
 
     /* ─── Build HTML ─────────────────────────────────────────── */
     const skillLevel = { beginner: '●○○', intermediate: '●●○', advanced: '●●●' };

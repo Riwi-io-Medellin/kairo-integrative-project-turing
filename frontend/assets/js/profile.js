@@ -367,7 +367,8 @@ async function downloadCV() {
       a.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    showToast('CV generado. Usa Ctrl+P para imprimir como PDF.', 'success');
+    const printKey = navigator.platform?.includes('Mac') ? 'Cmd+P' : 'Ctrl+P';
+    showToast(`CV generado. Usa ${printKey} para imprimir como PDF.`, 'success');
   } catch (err) {
     showToast('Error al generar CV: ' + err.message, 'error');
   } finally {
