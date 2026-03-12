@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   register, login, logout, checkAuth, verifyOtp, resendOtp,
   updateFirstLoginStatus, updateUserProfile, socialAuthSuccess,
@@ -7,8 +8,16 @@ import passport from '../config/passport.js';
 
 const router = Router();
 
-router.post('/register', register);
-router.post('/login', login);
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests. Please try again in 15 minutes.' },
+});
+
+router.post('/register', authLimiter, register);
+router.post('/login', authLimiter, login);
 router.post('/logout', logout);
 router.get('/me', checkAuth);
 router.post('/verify-otp', verifyOtp);

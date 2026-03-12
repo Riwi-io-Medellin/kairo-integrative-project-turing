@@ -12,6 +12,7 @@ import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 import passport from './config/passport.js';
 import { pool, testConnection } from './config/database.js';
 import { connectMongo } from './config/mongodb.js';
@@ -79,6 +80,14 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', globalLimiter);
 
 /* ════════════════════════════════════════
    ROUTES

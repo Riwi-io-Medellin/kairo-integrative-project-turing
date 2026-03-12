@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   getCoderDashboard, getPlanDetails,
   updateActivityProgress, getModuleMilestones,
@@ -19,13 +20,20 @@ import { isAuthenticated, hasRole, checkOnboarding } from '../middlewares/authMi
 const router = Router();
 router.use(isAuthenticated, hasRole('coder'), checkOnboarding);
 
+const profileLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /* ── Dashboard ── */
 router.get('/dashboard',                            getCoderDashboard);
 
 /* ── Profile ── */
-router.get('/profile',                             getCoderProfile);
-router.put('/profile',                             updateCoderProfile);
-router.get('/profile/cv',                          generateCoderCV);
+router.get('/profile',                             profileLimiter, getCoderProfile);
+router.put('/profile',                             profileLimiter, updateCoderProfile);
+router.get('/profile/cv',                          profileLimiter, generateCoderCV);
 
 /* ── Plans ── */
 router.get('/plan',                                getActivePlan);
