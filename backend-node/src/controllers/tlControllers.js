@@ -1,0 +1,181 @@
+/**
+ * controllers/tlControllers.js
+ */
+
+import { query } from '../config/database.js';
+import { calculatePercentage, formatDate } from '../utils/helpers.js';
+import { sanitizeInput } from '../utils/validators.js';
+import { notifyUser } from '../services/notificationService.js';
+
+export async function getAllCodersByClan(req, res) {
+  const { clan_id } = req.params;
+  try {
+    const result = await query(
+      `SELECT u.id, u.full_name, u.email, mp.average_score, mp.current_week,
+              rf.risk_level, rf.reason AS risk_reason
+       FROM users u
+       LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
+       LEFT JOIN risk_flags rf ON u.id = rf.coder_id AND rf.resolved = false
+       WHERE u.role = 'coder' AND u.clan = $1
+       ORDER BY CASE rf.risk_level WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END, u.full_name ASC`,
+      [clan_id]
+    );
+    res.json({ clan: clan_id, total: result.rows.length, coders: result.rows });
+  } catch (error) {
+    console.error('[TL Clan View Error]:', error);
+    res.status(500).json({ error: 'Failed to fetch clan data' });
+  }
+}
+
+export async function getClanMetrics(req, res) {
+  const { clan_id } = req.params;
+  try {
+    const result = await query(
+      `SELECT AVG(mp.average_score) AS clan_average,
+              COUNT(CASE WHEN rf.risk_level IN ('high','critical') THEN 1 END) AS high_risk_count,
+              COUNT(u.id) AS total_coders
+       FROM users u
+       LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
+       LEFT JOIN risk_flags rf ON u.id = rf.coder_id AND rf.resolved = false
+       WHERE u.clan = $1 AND u.role = 'coder'`,
+      [clan_id]
+    );
+    const clanAverage = parseFloat(result.rows[0].clan_average || 0);
+    const highRiskCount = parseInt(result.rows[0].high_risk_count || 0);
+    const totalCoders = parseInt(result.rows[0].total_coders || 0);
+    res.json({
+      clanId: clan_id,
+      metrics: {
+        averagePerformance: clanAverage.toFixed(2),
+        highRiskCoders: highRiskCount,
+        totalStudents: totalCoders,
+        riskPercentage: calculatePercentage(highRiskCount, totalCoders),
+      },
+    });
+  } catch (error) {
+    console.error('[TL Metrics Error]:', error);
+    res.status(500).json({ error: 'Failed to calculate clan metrics' });
+  }
+}
+
+export async function getCoderFullDetail(req, res) {
+  const { id } = req.params;
+  try {
+    const result = await query(
+      `SELECT u.id, u.full_name, u.email, u.clan, u.created_at,
+              mp.average_score, mp.current_week, mp.weeks_completed,
+              ss.autonomy, ss.time_management, ss.problem_solving,
+              ss.communication, ss.teamwork, ss.learning_style
+       FROM users u
+       LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
+       LEFT JOIN soft_skills_assessment ss ON u.id = ss.coder_id
+       WHERE u.id = $1 AND u.role = 'coder'`,
+      [id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Coder not found' });
+    const coder = result.rows[0];
+    coder.joined_date = formatDate(coder.created_at);
+    res.json({ coder });
+  } catch (error) {
+    console.error('[TL Coder Detail Error]:', error);
+    res.status(500).json({ error: 'Failed to fetch coder details' });
+  }
+}
+
+export async function submitFeedback(req, res) {
+  const { coderId, feedbackText, feedbackType } = req.body;
+  const tlId = req.session.userId;
+  if (!coderId || !feedbackText || !feedbackType)
+    return res.status(400).json({ error: 'All fields are required' });
+  try {
+    const result = await query(
+      `INSERT INTO tl_feedback (coder_id, tl_id, feedback_text, feedback_type, created_at)
+       VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
+      [coderId, tlId, sanitizeInput(feedbackText), sanitizeInput(feedbackType)]
+    );
+    const tlResult = await query('SELECT full_name FROM users WHERE id = $1', [tlId]);
+    const tlName = tlResult.rows[0]?.full_name || 'Tu TL';
+    await notifyUser(coderId, 'Nuevo Feedback Requerido',
+      `${tlName} te ha dejado un feedback: "${feedbackText.substring(0, 50)}..."`,
+      'feedback', result.rows[0].id);
+    res.status(201).json({ success: true, message: 'Feedback registered', data: result.rows[0] });
+  } catch (error) {
+    console.error('[TL Feedback Error]:', error);
+    res.status(500).json({ error: 'Failed to submit feedback' });
+  }
+}
+
+export async function getRiskReports(req, res) {
+  try {
+    const result = await query(
+      `SELECT rf.*, u.full_name, u.email
+       FROM risk_flags rf JOIN users u ON rf.coder_id = u.id
+       WHERE rf.resolved = false
+       ORDER BY CASE rf.risk_level WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END`
+    );
+    res.json({ active_risks: result.rows });
+  } catch (error) {
+    console.error('[TL Risk Report Error]:', error);
+    res.status(500).json({ error: 'Failed to fetch risk reports' });
+  }
+}
+
+export async function getDashboardData(req, res) {
+  const tlId = req.session.userId;
+  try {
+    const tlResult = await query('SELECT full_name, clan FROM users WHERE id = $1', [tlId]);
+    const tl = tlResult.rows[0];
+    if (!tl) return res.status(404).json({ error: 'TL not found' });
+
+    const codersResult = await query(
+      `SELECT u.id, u.full_name, u.email, u.first_login, u.clan,
+              mp.average_score, mp.current_week,
+              ss.autonomy, ss.time_management, ss.problem_solving, ss.communication, ss.teamwork, ss.learning_style,
+              rf.risk_level
+       FROM users u
+       LEFT JOIN moodle_progress mp ON u.id = mp.coder_id
+       LEFT JOIN soft_skills_assessment ss ON u.id = ss.coder_id
+       LEFT JOIN risk_flags rf ON u.id = rf.coder_id AND rf.resolved = false
+       WHERE u.role = 'coder' AND u.clan = $1
+       ORDER BY u.full_name ASC`,
+      [tl.clan]
+    );
+
+    const coders = codersResult.rows;
+    const totalCoders = coders.length;
+    const completedOnboarding = coders.filter((c) => !c.first_login).length;
+    const highRiskCoders = coders.filter(
+      (c) => c.risk_level === 'high' || c.risk_level === 'critical'
+    ).length;
+
+    const overview = {
+      totalCoders, completedOnboarding,
+      pendingOnboarding: totalCoders - completedOnboarding,
+      highRiskCoders,
+      clanAvgScore: totalCoders > 0
+        ? (coders.reduce((acc, c) => acc + parseFloat(c.average_score || 0), 0) / totalCoders).toFixed(1)
+        : 0,
+    };
+
+    const softSkillsAverage = { autonomy: 0, time_management: 0, problem_solving: 0, communication: 0, teamwork: 0 };
+    const codersWithSkills = coders.filter((c) => c.learning_style !== null);
+
+    if (codersWithSkills.length > 0) {
+      codersWithSkills.forEach((c) => {
+        softSkillsAverage.autonomy += parseFloat(c.autonomy || 0);
+        softSkillsAverage.time_management += parseFloat(c.time_management || 0);
+        softSkillsAverage.problem_solving += parseFloat(c.problem_solving || 0);
+        softSkillsAverage.communication += parseFloat(c.communication || 0);
+        softSkillsAverage.teamwork += parseFloat(c.teamwork || 0);
+      });
+      Object.keys(softSkillsAverage).forEach((key) => {
+        softSkillsAverage[key] = parseFloat((softSkillsAverage[key] / codersWithSkills.length).toFixed(1));
+      });
+    }
+
+    res.json({ tl: { fullName: tl.full_name, clan: tl.clan }, coders, overview, softSkillsAverage });
+  } catch (error) {
+    console.error('[Dashboard Data Error]:', error);
+    res.status(500).json({ error: 'Error loading dashboard data' });
+  }
+}
