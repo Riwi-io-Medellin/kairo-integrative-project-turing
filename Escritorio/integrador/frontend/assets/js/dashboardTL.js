@@ -70,6 +70,7 @@ function renderTLInfo({ fullName, clan }) {
   el('sidebar-tl-name').textContent = fullName;
   el('sidebar-tl-clan').textContent = cap(clan);
   el('clan-heading').textContent = cap(clan);
+  sessionStorage.setItem('clan', clan);
 }
 
 /* ── Stats ── */
@@ -199,7 +200,7 @@ function renderDetail(c) {
   const body = el('detail-body');
   body.classList.remove('hidden');
   body.style.display = 'flex';
-
+  sessionStorage.setItem('ID', c.id);
   el('d-name').textContent = c.full_name;
   el('d-clan').textContent = cap(c.clan || '—');
   el('d-email').textContent = c.email;

@@ -44,7 +44,6 @@ async function generateReportClan(clan) {
         const response = await fetch(`http://127.0.0.1:8000/api/reports/generar-informe-clan-pdf?clan_name=${clan}`, {
             method: 'POST'
         });
-        
         if (!response.ok) throw new Error(`Error ${response.status}`);
         
         const pdfBlob = await response.blob();
