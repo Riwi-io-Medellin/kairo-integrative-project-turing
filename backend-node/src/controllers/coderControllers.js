@@ -8,6 +8,7 @@
 
 import 'dotenv/config';
 import { query } from '../config/database.js';
+import { notifyUser } from '../services/notificationService.js';
 
 /* ════════════════════════════════════════
    DASHBOARD  —  GET /api/coder/dashboard
@@ -30,7 +31,7 @@ export async function getCoderDashboard(req, res) {
       query(
         `
         SELECT
-          u.full_name, u.email, u.clan, u.role,
+          u.full_name, u.email, u.clan AS clan_id, u.role,
           u.current_module_id,
           u.learning_style_cache,
           m.name        AS module_name,
@@ -96,6 +97,7 @@ export async function getCoderDashboard(req, res) {
           f.feedback_text,
           f.feedback_type,
           f.created_at,
+          f.is_read,
           u.full_name AS tl_name
         FROM tl_feedback f
         JOIN users u ON u.id = f.tl_id
@@ -174,8 +176,9 @@ export async function getCoderDashboard(req, res) {
         ? {
             fullName: user.full_name,
             email: user.email,
-            clan: user.clan,
+            clanId: user.clan_id,
             role: user.role,
+            firstLogin: user.first_login,
             moduleId: user.current_module_id,
             moduleName: user.module_name,
             moduleTotalWeeks: user.module_total_weeks,
@@ -227,6 +230,7 @@ export async function getCoderDashboard(req, res) {
           type: f.feedback_type,
           tlName: f.tl_name,
           createdAt: f.created_at,
+          isRead: f.is_read,
         })),
       },
 
@@ -506,5 +510,45 @@ export async function getModuleMilestones(req, res) {
   } catch (error) {
     console.error('[Milestones Error]:', error);
     res.status(500).json({ error: 'Failed to fetch milestones' });
+  }
+}
+export async function markFeedbackRead(req, res) {
+  const { id } = req.params;
+  const userId = req.session.userId;
+
+  try {
+    // 1. Update feedback status
+    const result = await query(
+      `
+      UPDATE tl_feedback
+      SET is_read = true, read_at = NOW()
+      WHERE id = $1 AND coder_id = $2
+      RETURNING *
+      `,
+      [id, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Feedback not found' });
+    }
+
+    const feedback = result.rows[0];
+
+    // 2. Notify TL in real-time
+    const coder = await query('SELECT full_name FROM users WHERE id = $1', [userId]);
+    const coderName = coder.rows[0]?.full_name || 'Un Coder';
+
+    await notifyUser(
+      feedback.tl_id,
+      'Feedback Leído',
+      `${coderName} ha leído tu feedback: "${feedback.feedback_text.substring(0, 40)}..."`,
+      'feedback_read',
+      feedback.id
+    );
+
+    res.json({ success: true, message: 'Feedback marked as read' });
+  } catch (error) {
+    console.error('[markFeedbackRead Error]:', error);
+    res.status(500).json({ error: 'Failed to mark feedback as read' });
   }
 }

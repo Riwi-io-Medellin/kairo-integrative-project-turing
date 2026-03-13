@@ -3,7 +3,7 @@
  * Team Leader Controller.
  *
  * FIXES:
- *  - u.clan_id → u.clan  (clan is an enum column, not a FK — no clan_id exists)
+ *  - u.clan_id (verified in schema)
  *  - mp.completed_activities → removed (column does not exist in schema)
  *  - getCoderFullDetail: u.clan_id → u.clan
  *  - Risk level ORDER BY: added 'critical' tier
@@ -12,6 +12,7 @@
 import { query } from '../config/database.js';
 import { calculatePercentage, formatDate } from '../utils/helpers.js';
 import { sanitizeInput } from '../utils/validators.js';
+import { notifyUser } from '../services/notificationService.js';
 
 /* ════════════════════════════════════════
    CLAN OVERVIEW
@@ -124,7 +125,7 @@ export async function getCoderFullDetail(req, res) {
         u.id,
         u.full_name,
         u.email,
-        u.clan,
+        u.clan AS clan_id,
         u.created_at,
         mp.average_score,
         mp.current_week,
@@ -150,6 +151,9 @@ export async function getCoderFullDetail(req, res) {
 
     const coder = result.rows[0];
     coder.joined_date = formatDate(coder.created_at);
+    // clan -> clan_id fix for frontend sync
+    coder.clanId = coder.clan; 
+    coder.clan_id = coder.clan;
 
     res.json({ coder });
   } catch (error) {
@@ -181,6 +185,19 @@ export async function submitFeedback(req, res) {
       RETURNING *
     `,
       [coderId, tlId, sanitizeInput(feedbackText), sanitizeInput(feedbackType)]
+    );
+
+    // Get TL name for the notification
+    const tlResult = await query('SELECT full_name FROM users WHERE id = $1', [tlId]);
+    const tlName = tlResult.rows[0]?.full_name || 'Tu TL';
+
+    // Dispatch realtime notification to the coder
+    await notifyUser(
+      coderId,
+      'Nuevo Feedback Requerido',
+      `${tlName} te ha dejado un feedback: "${feedbackText.substring(0, 50)}..."`,
+      'feedback',
+      result.rows[0].id
     );
 
     res.status(201).json({
@@ -234,7 +251,7 @@ export async function getDashboardData(req, res) {
   try {
     // 1. Obtener info del TL (y su clan)
     const tlResult = await query(
-      'SELECT full_name, clan FROM users WHERE id = $1',
+      'SELECT full_name, clan AS clan_id FROM users WHERE id = $1',
       [tlId]
     );
     const tl = tlResult.rows[0];
@@ -246,7 +263,7 @@ export async function getDashboardData(req, res) {
     const codersResult = await query(
       `
       SELECT 
-        u.id, u.full_name, u.email, u.first_login, u.clan,
+        u.id, u.full_name, u.email, u.first_login, u.clan AS clan_id,
         mp.average_score, mp.current_week,
         ss.autonomy, ss.time_management, ss.problem_solving, ss.communication, ss.teamwork, ss.learning_style,
         rf.risk_level
@@ -257,7 +274,7 @@ export async function getDashboardData(req, res) {
       WHERE u.role = 'coder' AND u.clan = $1
       ORDER BY u.full_name ASC
     `,
-      [tl.clan]
+      [tl.clan_id]
     );
 
     const coders = codersResult.rows;
@@ -318,7 +335,7 @@ export async function getDashboardData(req, res) {
     res.json({
       tl: {
         fullName: tl.full_name,
-        clan: tl.clan,
+        clanId: tl.clan_id,
       },
       coders: coders,
       overview: overview,

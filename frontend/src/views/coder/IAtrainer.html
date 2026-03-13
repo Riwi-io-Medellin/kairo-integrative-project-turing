@@ -42,18 +42,20 @@
 
         <nav class="sidebar-nav">
           <a class="nav-link" href="./dashboard.html">
-            <span class="nav-icon"><i class="fa-solid fa-grid-2"></i></span>
+            <span class="nav-icon"
+              ><i class="fa-solid fa-table-columns"></i
+            ></span>
             Dashboard
           </a>
           <a class="nav-link active" href="#">
-            <span class="nav-icon"
-              ><i class="fa-solid fa-brain-circuit"></i
-            ></span>
+            <span class="nav-icon"><i class="fa-solid fa-microchip"></i></span>
             AI Trainer
           </a>
-          <a class="nav-link" href="./progress.html">
-            <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
-            Mi Progreso
+          <a class="nav-link" href="./assignment.html">
+            <span class="nav-icon"
+              ><i class="fa-solid fa-clipboard-list"></i
+            ></span>
+            Actividades
           </a>
         </nav>
 
@@ -80,6 +82,24 @@
             <p class="topbar-date" id="topbar-date">—</p>
           </div>
           <div class="topbar-right">
+            <!-- Notification bell -->
+            <div class="notif-wrapper">
+              <button class="icon-btn" id="btn-notif" title="Notificaciones">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notif-dot hidden" id="notif-dot"></span>
+              </button>
+              <!-- Dropdown -->
+              <div class="notif-dropdown hidden" id="notif-dropdown">
+                <p class="notif-header">Notificaciones</p>
+                <div id="notif-list">
+                  <p class="notif-empty">Sin notificaciones nuevas</p>
+                </div>
+              </div>
+            </div>
+            <!-- Language toggle -->
+            <button class="icon-btn" id="btn-lang" title="Idioma">
+              <i class="fa-solid fa-earth-americas"></i>
+            </button>
             <button class="icon-btn" id="btn-theme" title="Cambiar tema">
               <i class="fa-solid fa-moon" id="icon-moon"></i>
               <i
@@ -264,6 +284,29 @@
           </div>
 
           <!-- Completed overlay (shows when current day is done) -->
+          <!-- ── Recursos del TL (RAG) ── -->
+          <div class="resources-section" id="resources-section">
+            <div class="resources-section-header">
+              <span class="resources-section-title">
+                <i class="fa-solid fa-folder-open"></i>
+                Recursos del TL para este tema
+              </span>
+              <span
+                class="resources-loading-badge hidden"
+                id="resources-loading-badge"
+              >
+                <i class="fa-solid fa-spinner fa-spin fa-xs"></i> Buscando...
+              </span>
+            </div>
+            <!-- Cards populated by JS -->
+            <div class="resources-cards" id="resources-cards"></div>
+            <!-- Empty state -->
+            <p class="resources-empty hidden" id="resources-empty">
+              <i class="fa-regular fa-folder-open"></i>
+              Tu TL aún no ha subido recursos para este tema.
+            </p>
+          </div>
+
           <div class="day-completed-banner hidden" id="day-completed-banner">
             <i class="fa-solid fa-circle-check"></i>
             <span>¡Día completado! Sigue avanzando con el siguiente día.</span>
