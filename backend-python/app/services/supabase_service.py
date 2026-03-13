@@ -1,8 +1,4 @@
-"""
-app/services/supabase_service.py
-Singleton Supabase client. SERVICE_ROLE key — bypasses RLS.
-Python owns all data retrieval (Slim Communication architecture).
-"""
+""" app/services/supabase_service.py """
 
 import os
 import logging
@@ -12,7 +8,6 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger("kairo-supabase")
 load_dotenv()
-
 
 class SupabaseManager:
     def __init__(self):
@@ -24,7 +19,6 @@ class SupabaseManager:
         logger.info("Supabase client initialized.")
 
     # ── READ ───────────────────────────────────────────────────
-
     def get_soft_skills(self, coder_id: int) -> Optional[Dict]:
         try:
             r = self.client.table("soft_skills_assessment") \
@@ -74,7 +68,6 @@ class SupabaseManager:
             return []
 
     # ── WRITE ──────────────────────────────────────────────────
-
     def deactivate_plans(self, coder_id: int) -> None:
         """
         Marks all existing active plans for a coder as inactive
@@ -191,6 +184,7 @@ class SupabaseManager:
         except Exception as e:
             logger.error(f"Failed to save submission: {e}")
             return None
+
 
 
 db_manager = SupabaseManager()

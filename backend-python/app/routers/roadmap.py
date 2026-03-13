@@ -17,6 +17,7 @@ router = APIRouter(tags=["Learning Plans"])
 
 
 # ── DTO ──────────────────────────────────────────────────────────────────────
+
 class GeneratePlanRequest(BaseModel):
     coder_id:          int
     module_id:         int
@@ -30,6 +31,7 @@ class GeneratePlanRequest(BaseModel):
 
 
 # ── Endpoint ─────────────────────────────────────────────────────────────────
+
 @router.post("/generate-plan")
 async def generate_plan(req: GeneratePlanRequest):
     """

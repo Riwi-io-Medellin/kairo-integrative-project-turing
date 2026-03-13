@@ -1,13 +1,6 @@
 /**
  * assets/js/aiTrainer.js
  * AI Trainer — Kairo
- *
- * Estados:
- *   1. generating  → polling GET /api/coder/plan cada 4s
- *   2. active      → renderiza el plan del día
- *   3. no-plan     → botón para solicitar generación
- *
- * Sin mock data. Todos los datos vienen del backend.
  */
 
 import { guards, sessionManager } from '../../src/core/auth/session.js';
@@ -26,21 +19,18 @@ const POLL_MESSAGES = [
 
 /* ── State ── */
 let planData = null; // { id, planContent, completedDays, currentDay, ... }
-let viewDay = 1; // día que se está mostrando en pantalla
-let viewWeek = 1; // semana activa en el navegador
+let viewDay = 1;
+let viewWeek = 1;
 let pollTimer = null;
 let pollCount = 0;
 
 /* ── Shorthand ── */
 const el = (id) => document.getElementById(id);
 
-/* ══════════════════════════════════════
-   BOOTSTRAP
-══════════════════════════════════════ */
+/* ══ BOOTSTRAP ═══ */
 (async function init() {
   applyTheme();
   wireTheme();
-  wireLang();
   wireLogout();
   setDate();
 
@@ -64,20 +54,9 @@ const el = (id) => document.getElementById(id);
 
   await checkPlan();
   wireRequestPlan();
-
-  // Real-time Sync: refresh plan if TL sends feedback or activity
-  window.addEventListener('kairo-notification', (e) => {
-    const n = e.detail;
-    if (n.type === 'feedback' || n.type === 'assignment') {
-      console.log('[SSE-Sync] New TL update, refreshing plan...');
-      checkPlan();
-    }
-  });
 })();
 
-/* ══════════════════════════════════════
-   PLAN CHECK
-══════════════════════════════════════ */
+/* ══ PLAN CHECK ═══ */
 async function checkPlan() {
   try {
     const res = await fetch(`${API}/coder/plan`, { credentials: 'include' });
@@ -92,8 +71,6 @@ async function checkPlan() {
 
     planData = data.plan;
 
-    // Si el plan acaba de llegar pero es de hace menos de 30s podría estar incompleto
-    // (generación Python aún escribiendo) — en ese caso el plan_content puede estar vacío
     if (!planData.planContent?.weeks?.length) {
       startPolling();
       return;
@@ -107,9 +84,7 @@ async function checkPlan() {
   }
 }
 
-/* ══════════════════════════════════════
-   POLLING
-══════════════════════════════════════ */
+/* ═══ POLLING ═══ */
 const POLL_MAX = 30; // 30 × 4s = 2 min máximo
 
 function startPolling() {
@@ -158,9 +133,7 @@ function startPolling() {
   }, POLL_INTERVAL);
 }
 
-/* ══════════════════════════════════════
-   REQUEST NEW PLAN
-══════════════════════════════════════ */
+/* ═══ REQUEST NEW PLAN ═══ */
 function wireRequestPlan() {
   el('btn-request-plan').addEventListener('click', async () => {
     const btn = el('btn-request-plan');
@@ -184,9 +157,7 @@ function wireRequestPlan() {
   });
 }
 
-/* ══════════════════════════════════════
-   RENDER ACTIVE PLAN
-══════════════════════════════════════ */
+/* ══ RENDER ACTIVE PLAN ══ */
 function renderActivePlan() {
   const plan = planData.planContent;
   const meta = planData.moodleStatusSnapshot || {};
@@ -355,10 +326,6 @@ function renderDay(day) {
 
   // Sync dot styles
   renderWeekNav(Math.ceil(day / 5));
-
-  // Buscar recursos del TL para este topic (RAG — no bloquea el render)
-  const tech1 = weekObj?.days?.[(day - 1) % 5]?.technical_activity || {};
-  if (tech1.title) searchAndRenderResources(tech1.title, planData.moduleId);
 }
 
 /* ── Mark day complete ── */
@@ -404,9 +371,7 @@ function goToDay(d) {
   renderDay(d);
 }
 
-/* ══════════════════════════════════════
-   STATE MACHINE
-══════════════════════════════════════ */
+/* STATE MACHINE */
 function showState(state) {
   ['generating', 'no-plan', 'active'].forEach((s) => {
     el(`state-${s}`).classList.add('hidden');
@@ -414,10 +379,7 @@ function showState(state) {
   el(`state-${state}`).classList.remove('hidden');
 }
 
-/**
- * Muestra el estado sin-plan con un mensaje de error.
- * Usado cuando el plan es fallback (OpenAI 401, timeout, etc.)
- */
+
 function showNoPlanWithError(reason) {
   showState('no-plan');
   const sub = el('no-plan-sub');
@@ -427,9 +389,7 @@ function showNoPlanWithError(reason) {
   }
 }
 
-/* ══════════════════════════════════════
-   THEME
-══════════════════════════════════════ */
+/* === THEME ═══ */
 function applyTheme() {
   const stored = localStorage.getItem('kairo_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', stored);
@@ -451,22 +411,9 @@ function syncThemeIcon(theme) {
   el('icon-sun').style.display = theme === 'light' ? 'block' : 'none';
 }
 
-/* ══════════════════════════════════════
-   UTILS
-══════════════════════════════════════ */
+/* UTILS */
 function wireLogout() {
   el('btn-logout').addEventListener('click', () => sessionManager.logout());
-}
-
-/* Language toggle — cycles es/en (UI label only for now) */
-const LANGS = ['ES', 'EN'];
-let langIdx = 0;
-function wireLang() {
-  el('btn-lang').addEventListener('click', () => {
-    langIdx = (langIdx + 1) % LANGS.length;
-    el('btn-lang').title = `Idioma: ${LANGS[langIdx]}`;
-    // Full i18n implementation in i18n.js
-  });
 }
 
 function setDate() {
@@ -505,16 +452,13 @@ function skillLabel(key) {
   );
 }
 
-/* ══════════════════════════════════════
-   URL EXTRACTOR — recursos como botones */
+/* ══ URL EXTRACTOR — recursos como botones ═══ */
 function extractUrl(text) {
   const match = (text || '').match(/https?:\/\/[^\s"')]+/);
   return match ? match[0] : null;
 }
 
-/* ══════════════════════════════════════
-   EXERCISE MODAL
-══════════════════════════════════════ */
+/* ═══ EXERCISE MODAL ═══ */
 let monacoEditor = null;
 let currentExercise = null;
 let hintIndex = 0;
@@ -765,69 +709,3 @@ function closeExerciseModal() {
 
 // Expose for inline fallback button
 window.closeExerciseModal = closeExerciseModal;
-
-/* ══════════════════════════════════════
-   RAG — RECURSOS DEL TL
-══════════════════════════════════════ */
-async function searchAndRenderResources(topic, moduleId) {
-  const cardsEl = el('resources-cards');
-  const emptyEl = el('resources-empty');
-  const loadingEl = el('resources-loading-badge');
-
-  // Reset
-  cardsEl.innerHTML = '';
-  emptyEl.classList.add('hidden');
-  loadingEl.classList.remove('hidden');
-
-  try {
-    const res = await fetch(`${API}/coder/resources/search`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, moduleId, limit: 3 }),
-    });
-    const data = await res.json();
-
-    loadingEl.classList.add('hidden');
-
-    if (!data.resources?.length) {
-      emptyEl.classList.remove('hidden');
-      return;
-    }
-
-    cardsEl.innerHTML = data.resources
-      .map(
-        (r) => `
-      <div class="resource-card">
-        <div class="resource-card-icon">
-          <i class="fa-solid fa-file-pdf"></i>
-        </div>
-        <div class="resource-card-body">
-          <p class="resource-card-title">${r.title}</p>
-          <p class="resource-card-preview">${r.preview_text || r.file_name}</p>
-          <div class="resource-card-meta">
-            <span class="resource-similarity">
-              ${Math.round(r.similarity * 100)}% relevante
-            </span>
-            <span style="font-size:11px;color:var(--text-muted)">${r.file_name}</span>
-          </div>
-        </div>
-        ${
-          r.download_url
-            ? `<a class="btn-download-resource"
-                href="${r.download_url}"
-                target="_blank"
-                rel="noopener noreferrer">
-               <i class="fa-solid fa-download"></i> Descargar
-             </a>`
-            : `<span style="font-size:11px;color:var(--text-muted);flex-shrink:0">Sin enlace</span>`
-        }
-      </div>
-    `
-      )
-      .join('');
-  } catch {
-    loadingEl.classList.add('hidden');
-    emptyEl.classList.remove('hidden');
-  }
-}
