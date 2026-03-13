@@ -1,5 +1,8 @@
 """
 app/models/plan_request.py
+Request and response models for plan generation.
+
+FIX: Migrated from Pydantic v1 (class Config) to Pydantic v2 (model_config).
 """
 
 from pydantic import BaseModel, Field

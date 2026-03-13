@@ -1,57 +1,45 @@
 """
 app/routers/roadmap.py
 POST /generate-plan
+
+Architecture: Slim Communication
+  Node.js sends only: { coder_id, module_id, topic, struggling_topics, additional_topics }
+  Python owns data retrieval: fetches soft_skills, module, weeks directly from Supabase.
+  Python builds the full context and calls OpenAI.
 """
 
 import time
 import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
-
-from app.services.ia_services     import generate_plan_with_ai
+from app.services.ia_services import generate_plan_with_openai
 from app.services.supabase_service import db_manager
 
 logger = logging.getLogger("kairo-roadmap")
 router = APIRouter(tags=["Learning Plans"])
 
 
-# ── DTO ──────────────────────────────────────────────────────────────────────
-
+# ── Slim DTO — only IDs and dynamic context from Node ──────────
 class GeneratePlanRequest(BaseModel):
-    coder_id:          int
-    module_id:         int
-    plan_type:         str = "interpretive"   # "interpretive" | "analytical"
-
-    # Only required for analytical plans (sent from Monday cron / weekly close)
-    current_week:      Optional[int]   = 1
-    average_score:     Optional[float] = 0.0
-    struggling_topics: List[str]       = []
-    weeks_completed:   List[dict]      = []   # [{week, average_score, struggling_topics}]
+    coder_id:         int
+    module_id:        int
+    topic:            str
+    struggling_topics: list[str] = []
+    additional_topics: list[str] = []
 
 
-# ── Endpoint ─────────────────────────────────────────────────────────────────
-
+# ── Endpoint ───────────────────────────────────────────────────
 @router.post("/generate-plan")
 async def generate_plan(req: GeneratePlanRequest):
     """
-    Flow:
-      1. Validate plan_type
-      2. Fetch soft_skills, module, weeks, coder from Supabase
-      3. Deactivate any existing active plan for this coder
-      4. Build context dict (add weekly data for analytical)
-      5. Call AI service (selects correct prompt internally)
-      6. Persist plan + log generation
+    1. Python fetches soft_skills from Supabase using coder_id
+    2. Python fetches module + weeks from Supabase using module_id
+    3. Builds full profile and calls OpenAI
+    4. Saves plan to complementary_plans + logs to ai_generation_log
     """
     start = time.time()
 
-    if req.plan_type not in ("interpretive", "analytical"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"plan_type must be 'interpretive' or 'analytical', got '{req.plan_type}'"
-        )
-
-    # ── 1. Soft skills ────────────────────────────────────────────────────────
+    # ── 1. Soft skills (learning style + scores) ────────────────
     soft_skills = db_manager.get_soft_skills(req.coder_id)
     if not soft_skills:
         raise HTTPException(
@@ -59,57 +47,45 @@ async def generate_plan(req: GeneratePlanRequest):
             detail=f"No diagnostic found for coder {req.coder_id}. Complete onboarding first."
         )
 
-    # ── 2. Module + weeks ─────────────────────────────────────────────────────
+    # ── 2. Module info ──────────────────────────────────────────
     module = db_manager.get_module(req.module_id)
     if not module:
         raise HTTPException(
             status_code=404,
-            detail=f"Module {req.module_id} not found. Run seed_modules.sql first."
+            detail=f"Module {req.module_id} not found in database. Run seed_modules.sql first."
         )
+
+    # ── 3. Weeks for this module ────────────────────────────────
     weeks = db_manager.get_weeks(req.module_id)
 
-    # ── 3. Coder info ─────────────────────────────────────────────────────────
+    # ── 4. Coder name ───────────────────────────────────────────
     coder = db_manager.get_coder(req.coder_id)
-    coder_name = coder.get("full_name", "Estudiante") if coder else "Estudiante"
+    coder_name = coder.get("full_name", "Student") if coder else "Student"
 
-    # ── 4. Deactivate previous active plan ───────────────────────────────────
-    db_manager.deactivate_plans(req.coder_id)
-
-    # ── 5. Build context ──────────────────────────────────────────────────────
+    # ── 5. Build full context and generate plan ─────────────────
     context = {
-        "plan_type":   req.plan_type,
-        "coder_id":    req.coder_id,
-        "coder_name":  coder_name,
+        "coder_id":   req.coder_id,
+        "coder_name": coder_name,
         "soft_skills": soft_skills,
         "module":      module,
         "weeks":       weeks,
-        "current_week": req.current_week,
+        "topic":              req.topic,
+        "struggling_topics":  req.struggling_topics,
+        "additional_topics":  req.additional_topics,
     }
 
-    # Analytical-only fields
-    if req.plan_type == "analytical":
-        context.update({
-            "average_score":     req.average_score,
-            "struggling_topics": req.struggling_topics,
-            "weeks_completed":   req.weeks_completed,
-        })
-
-    # ── 6. Generate plan ──────────────────────────────────────────────────────
-    plan = await generate_plan_with_ai(context)
+    plan = await generate_plan_with_openai(context)
     exec_ms = int((time.time() - start) * 1000)
 
-    # ── 7. Persist ────────────────────────────────────────────────────────────
+    # ── 6. Persist plan ─────────────────────────────────────────
     moodle_snapshot = {
-        "plan_type":         req.plan_type,
-        "current_week":      req.current_week,
+        "topic":             req.topic,
+        "struggling_topics": req.struggling_topics,
+        "additional_topics": req.additional_topics,
         "module_name":       module.get("name"),
         "total_weeks":       module.get("total_weeks"),
-        # analytical extras
-        **({"average_score":     req.average_score,
-            "struggling_topics": req.struggling_topics}
-           if req.plan_type == "analytical" else {}),
+        "weeks_in_module":   [{"week": w.get("week_number"), "name": w.get("name")} for w in weeks],
     }
-
     plan_id = db_manager.save_plan(
         coder_id=req.coder_id,
         module_id=req.module_id,
@@ -119,13 +95,13 @@ async def generate_plan(req: GeneratePlanRequest):
         targeted_soft_skill=plan.get("targeted_soft_skill"),
     )
 
+    # ── 7. Log generation ───────────────────────────────────────
     db_manager.log_generation(
         coder_id=req.coder_id,
         agent_type="plan_generator",
         input_payload={
-            "plan_type":         req.plan_type,
-            "module_id":         req.module_id,
-            "current_week":      req.current_week,
+            "module_id":       req.module_id,
+            "topic":           req.topic,
             "struggling_topics": req.struggling_topics,
         },
         output_payload={"plan_id": plan_id, "status": plan.get("status", "ok")},
@@ -135,14 +111,13 @@ async def generate_plan(req: GeneratePlanRequest):
 
     return {
         "success": True,
-        "plan_id": plan_id,
         "plan":    plan,
         "metadata": {
-            "plan_type":    req.plan_type,
             "coder_id":     req.coder_id,
             "module_id":    req.module_id,
             "module_name":  module.get("name"),
-            "current_week": req.current_week,
+            "plan_id":      plan_id,
             "execution_ms": exec_ms,
+            "model":        "gpt-4o-mini",
         },
     }

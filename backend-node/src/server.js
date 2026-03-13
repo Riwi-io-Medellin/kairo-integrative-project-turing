@@ -1,10 +1,5 @@
 /**
  * app.js — Kairo API Gateway
- *
- * FIXES:
- *  - CORS: added explicit methods and headers so OPTIONS preflight passes
- *  - CORS: unified allowed origins (localhost only, no 127.0.0.1 mix)
- *  - Session cookie: sameSite kept as 'lax' in dev (correct for cross-origin fetches)
  */
 
 import 'dotenv/config';
@@ -26,29 +21,29 @@ const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 /* ════════════════════════════════════════
-   CORS
-   FIX: unified to localhost only — mixing localhost/127.0.0.1 breaks cookies.
-        Added explicit methods + headers so OPTIONS preflight never fails.
+   CORS - FIX DINÁMICO
 ════════════════════════════════════════ */
 const ALLOWED_ORIGINS = isProduction
   ? [process.env.FRONTEND_URL].filter(Boolean)
-  : ['http://localhost:5500', 'http://localhost:5173'];
+  : ['http://localhost:5500', 'http://127.0.0.1:5500'];
 
-// Definir primero — app.use y app.options lo referencian
-const _corsOptions = {
-  origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS: origin '${origin}' not allowed`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Set-Cookie'],
-};
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow requests with no origin (curl, Postman, server-to-server)
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin '${origin}' not allowed`));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Set-Cookie'],
+  })
+);
 
-app.use(cors(_corsOptions));
-app.options('/{*path}', cors(_corsOptions)); // preflight — Express 5 syntax
+// Respond to ALL preflight requests immediately
+app.options('/:path', cors());
 
 /* ── Standard middleware ── */
 app.use(morgan('dev'));
@@ -117,7 +112,13 @@ app.use((err, req, res, next) => {
 async function startServer() {
   try {
     process.stdout.write('🔄 Initializing Kairo services... ');
+
     await testConnection();
+
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('MAILER: RESEND_API_KEY is missing in .env');
+    }
+
     app.listen(PORT, '0.0.0.0', () => {
       console.log('DONE');
       console.log(
@@ -135,9 +136,22 @@ async function startServer() {
       );
     });
   } catch (error) {
-    console.error('FAILED', error);
+    // Aquí es donde el servidor se detiene y te chismea qué pasó
+    console.log('FAILED');
+    console.log('------------------------------------------------------------');
+    console.log('❌ CRITICAL ERROR DURING BOOTSTRAP');
+    console.log('------------------------------------------------------------');
+    console.log(`👉 TYPE    : ${error.name}`);
+    console.log(`👉 MESSAGE : ${error.message}`);
+
+    // Si el error tiene stack, te da la línea exacta para que no busques a ciegas
+    if (error.stack) {
+      const line = error.stack.split('\n')[1].trim();
+      console.log(`👉 LOCATION: ${line}`);
+    }
+
+    console.log('------------------------------------------------------------');
     process.exit(1);
   }
 }
-
 startServer();
