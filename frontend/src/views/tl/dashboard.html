@@ -207,6 +207,9 @@
               <div class="card-head">
                 <h2 class="card-title">Coders del Clan</h2>
                 <div class="filter-row" id="filter-row">
+                  <button class="btn-ghost" id="btn-report" onclick="generateReportClan(sessionStorage.getItem('b'))">
+                  <i class="fa-solid fa-file-pdf"></i> Reporte PDF Clan
+                  </button>
                   <button class="chip active" data-filter="all">Todos</button>
                   <button class="chip" data-filter="risk">En riesgo</button>
                   <button class="chip" data-filter="pending">Pendientes</button>
@@ -303,7 +306,7 @@
                     <button class="btn-primary" id="btn-feedback">
                       <i class="fa-solid fa-paper-plane"></i> Enviar
                     </button>
-                    <button class="btn-ghost" id="btn-report">
+                    <button class="btn-ghost" id="btn-report" onclick="generateReport(sessionStorage.getItem('a'))">
                       <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
                   </div>
@@ -319,7 +322,7 @@
       <i class="fa-solid fa-circle-check" id="toast-icon"></i>
       <span id="toast-msg">—</span>
     </div>
-
+    <script src="../../core/auth/reports.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module" src="../../../assets/js/dashboardTL.js"></script>
   </body>

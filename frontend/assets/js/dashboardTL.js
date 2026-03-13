@@ -73,10 +73,12 @@ function renderAll(data) {
 
 /* ── TL info ── */
 function renderTLInfo(tl) {
+  sessionStorage.setItem('b', tl.clanId);
   if (!tl) return;
   el('clan-heading').textContent = cap(tl.clanId);
   el('topbar-name').textContent = tl.fullName;
 }
+
 
 /* ── Stats ── */
 function renderStats(ov) {
@@ -193,7 +195,9 @@ function renderTable(coders) {
   el('tbl-wrap').classList.remove('hidden');
   const tbody = el('coder-tbody');
   tbody.innerHTML = filtered
+  
     .map((c) => {
+      sessionStorage.setItem('a', c.id);
       const isRisk = c.risk_level === 'high' || c.risk_level === 'critical';
       const isPend = c.first_login;
       const statusHTML = isRisk
@@ -202,6 +206,7 @@ function renderTable(coders) {
           ? `<span class="status-pending"><i class="fa-regular fa-clock"></i> Pendiente</span>`
           : `<span class="status-ok"><i class="fa-solid fa-circle-check"></i> Activo</span>`;
       const avgSkill = avgSoftSkills(c);
+      
       return `
       <tr data-id="${c.id}" class="${selectedCoder?.id === c.id ? 'selected' : ''}">
         <td><strong>${c.full_name}</strong></td>
