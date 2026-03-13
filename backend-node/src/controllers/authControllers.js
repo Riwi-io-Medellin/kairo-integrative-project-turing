@@ -66,7 +66,7 @@ export const login = async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, password, full_name, role, clan, first_login, otp_verified')
+      .select('id, email, password, full_name, role, clan_id, first_login, otp_verified')
       .eq('email', email)
       .single();
 
@@ -103,7 +103,7 @@ export const login = async (req, res) => {
           email: user.email,
           fullName: user.full_name,
           role: user.role,
-          clan: user.clan,
+          clan: user.clan_id,
           firstLogin: user.first_login,
         },
       });
@@ -181,7 +181,7 @@ export const verifyOtp = async (req, res) => {
           password: pending.password,
           full_name: pending.fullName,
           role: pending.role,
-          clan: pending.clan,
+          clan_id: pending.clan,
           otp_verified: true,
           first_login: true
         })
@@ -204,7 +204,7 @@ export const verifyOtp = async (req, res) => {
             email: newUser.email,
             fullName: newUser.full_name,
             role: newUser.role,
-            clan: newUser.clan,
+            clan: newUser.clan_id,
             firstLogin: newUser.first_login
           }
         });
@@ -300,7 +300,7 @@ export const updateUserProfile = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .update({ full_name: fullName, clan })
+      .update({ full_name: fullName, clan_id: clan })
       .eq('id', req.session.userId)
       .select()
       .single();
@@ -319,7 +319,7 @@ export const checkAuth = async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, full_name, role, clan, first_login')
+      .select('id, email, full_name, role, clan_id, first_login')
       .eq('id', req.session.userId)
       .single();
     if (error || !user) return res.status(401).json({ authenticated: false });
@@ -330,7 +330,7 @@ export const checkAuth = async (req, res) => {
         email: user.email,
         fullName: user.full_name,
         role: user.role,
-        clan: user.clan,
+        clan: user.clan_id,
         firstLogin: user.first_login,
       },
     });

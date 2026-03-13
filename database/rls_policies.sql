@@ -252,10 +252,24 @@ CREATE POLICY "feedback_tl_edit"
   ON tl_feedback FOR UPDATE
   USING (tl_id = auth.uid()::int AND auth.jwt()->>'role' = 'tl');
 
--- Coder puede marcar como leído
-CREATE POLICY "feedback_coder_mark_read"
-  ON tl_feedback FOR UPDATE
-  USING (coder_id = auth.uid()::int AND auth.jwt()->>'role' = 'coder');
+-- Coder puede marcar como leído — sólo a través del RPC mark_feedback_read (SECURITY DEFINER)
+-- El RLS de UPDATE directo para coders se reemplaza por una función para evitar
+-- que puedan modificar feedback_text, feedback_type u otras columnas sensibles.
+CREATE OR REPLACE FUNCTION mark_feedback_read(feedback_id INT)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  UPDATE tl_feedback
+  SET is_read = true
+  WHERE id = feedback_id
+    AND coder_id = auth.uid()::int;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION mark_feedback_read(INT) TO authenticated;
 
 -- ============================================
 -- ALERTAS DE RIESGO

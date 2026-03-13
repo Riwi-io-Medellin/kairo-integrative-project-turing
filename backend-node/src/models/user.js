@@ -8,15 +8,15 @@ import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
-export async function create({ email, password, fullName, role, clan, first_login = true }) {
+export async function create({ email, password, fullName, role, clan_id, first_login = true }) {
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
   const queryText = `
-    INSERT INTO users (email, password, full_name, role, clan, first_login)
+    INSERT INTO users (email, password, full_name, role, clan_id, first_login)
     VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING id, email, full_name, role, clan, first_login, created_at
+    RETURNING id, email, full_name, role, clan_id, first_login, created_at
   `;
 
-  const values = [email, hashedPassword, fullName, role, clan || null, first_login];
+  const values = [email, hashedPassword, fullName, role, clan_id || null, first_login];
 
   const result = await query(queryText, values);
   return result.rows[0];
@@ -27,7 +27,7 @@ export async function create({ email, password, fullName, role, clan, first_logi
  */
 export async function findByEmail(email) {
   const queryText = `
-    SELECT id, email, password, full_name, role, clan, first_login 
+    SELECT id, email, password, full_name, role, clan_id, first_login 
     FROM users 
     WHERE email = $1
   `;
@@ -40,7 +40,7 @@ export async function findByEmail(email) {
  */
 export async function findById(id) {
   const queryText = `
-    SELECT id, email, full_name, role, clan, first_login, created_at 
+    SELECT id, email, full_name, role, clan_id, first_login, created_at 
     FROM users 
     WHERE id = $1
   `;
@@ -56,15 +56,15 @@ export async function verifyPassword(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
-export async function updateFirstLogin(userId, clan = null) {
+export async function updateFirstLogin(userId, clan_id = null) {
   const queryText = `
     UPDATE users 
     SET first_login = false,
-        clan = COALESCE($2, clan)
+        clan_id = COALESCE($2, clan_id)
     WHERE id = $1
-    RETURNING id, first_login, clan
+    RETURNING id, first_login, clan_id
   `;
-  const result = await query(queryText, [userId, clan]);
+  const result = await query(queryText, [userId, clan_id]);
   return result.rows[0];
 }
 
@@ -88,7 +88,7 @@ export async function updateUserInDb(userId, updates) {
     UPDATE users 
     SET ${setClause} 
     WHERE id = $${values.length}
-    RETURNING id, email, full_name, role, clan, first_login
+    RETURNING id, email, full_name, role, clan_id, first_login
   `;
 
   const result = await query(queryText, values);

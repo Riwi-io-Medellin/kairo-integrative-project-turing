@@ -14,17 +14,21 @@ let inMemoryPlan = null;
 let inMemoryNotifications = [
   {
     id: '101',
+    title: 'Keep it up!',
+    message: 'Great progress this week. Keep your pace steady.',
     type: 'encouragement',
-    text: 'Great progress this week. Keep your pace steady.',
-    tlName: 'TL Mentor',
-    isRead: false,
+    tl_name: 'TL Mentor',
+    is_read: false,
+    created_at: new Date().toISOString(),
   },
   {
     id: '102',
+    title: 'Focus area',
+    message: 'Focus on SQL joins before Friday challenge.',
     type: 'improvement',
-    text: 'Focus on SQL joins before Friday challenge.',
-    tlName: 'TL Mentor',
-    isRead: false,
+    tl_name: 'TL Mentor',
+    is_read: false,
+    created_at: new Date().toISOString(),
   },
 ];
 
@@ -181,8 +185,8 @@ router.get('/coder/dashboard', (req, res) => {
       },
     ],
     notifications: {
-      unread: inMemoryNotifications.filter((n) => !n.isRead).length,
-      items: inMemoryNotifications,
+      unread: inMemoryNotifications.filter((n) => !n.is_read).length,
+      notifications: inMemoryNotifications,
     },
   });
 });
@@ -190,7 +194,7 @@ router.get('/coder/dashboard', (req, res) => {
 router.patch('/coder/feedback/:id/read', (req, res) => {
   const id = String(req.params.id);
   inMemoryNotifications = inMemoryNotifications.map((item) =>
-    String(item.id) === id ? { ...item, isRead: true } : item
+    String(item.id) === id ? { ...item, is_read: true } : item
   );
 
   res.json({ success: true });
@@ -328,10 +332,12 @@ router.post('/tl/feedback', (req, res) => {
   const nextId = String(Date.now());
   inMemoryNotifications.unshift({
     id: nextId,
+    title: feedbackType === 'encouragement' ? 'Encouragement' : 'Feedback',
+    message: feedbackText,
     type: feedbackType,
-    text: feedbackText,
-    tlName: 'TL Mentor',
-    isRead: false,
+    tl_name: 'TL Mentor',
+    is_read: false,
+    created_at: new Date().toISOString(),
   });
 
   return res.status(201).json({ success: true, id: nextId });
@@ -339,9 +345,47 @@ router.post('/tl/feedback', (req, res) => {
 
 router.get('/notifications', (req, res) => {
   res.json({
-    unread: inMemoryNotifications.filter((n) => !n.isRead).length,
-    items: inMemoryNotifications,
+    unread: inMemoryNotifications.filter((n) => !n.is_read).length,
+    notifications: inMemoryNotifications,
   });
+});
+
+// SSE stream — basic mode sends a "connected" ping then stays open
+router.get('/notifications/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  // Send initial heartbeat so the client knows it is connected
+  res.write(`data: ${JSON.stringify({ type: 'CONNECTED', mode: 'basic' })}\n\n`);
+
+  // Keep connection alive with periodic heartbeats
+  const heartbeat = setInterval(() => {
+    res.write(`: heartbeat\n\n`);
+  }, 25000);
+
+  req.on('close', () => {
+    clearInterval(heartbeat);
+    res.end();
+  });
+});
+
+// Mark all notifications as read
+router.post('/notifications/read', (req, res) => {
+  inMemoryNotifications = inMemoryNotifications.map((n) => ({ ...n, is_read: true }));
+  res.json({ success: true });
+});
+
+// Delete a single notification
+router.delete('/notifications/:id', (req, res) => {
+  const id = String(req.params.id);
+  const before = inMemoryNotifications.length;
+  inMemoryNotifications = inMemoryNotifications.filter((n) => String(n.id) !== id);
+  if (inMemoryNotifications.length === before) {
+    return res.status(404).json({ error: 'Notification not found' });
+  }
+  res.json({ success: true });
 });
 
 export default router;
