@@ -294,12 +294,6 @@ function wireFeedback() {
   });
 }
 
-/* PDF */
-el('btn-report')?.addEventListener('click', () => {
-  if (!selectedCoder) return;
-  generatePDF(selectedCoder);
-});
-
 /* Logout */
 function wireLogout() {
   el('btn-logout').addEventListener('click', () => sessionManager.logout());

@@ -17,9 +17,9 @@ load_dotenv()
 class SupabaseManager:
     def __init__(self):
         url = os.getenv("SUPABASE_URL")
-        key = os.getenv("SUPABASE_KEY")
+        key = os.getenv("SUPABASE_SERVICE_KEY")
         if not url or not key:
-            raise ValueError("SUPABASE_URL or SUPABASE_KEY missing.")
+            raise ValueError("SUPABASE_URL or SUPABASE_SERVICE_KEY missing.")
         self.client: Client = create_client(url, key)
         logger.info("Supabase client initialized.")
 
